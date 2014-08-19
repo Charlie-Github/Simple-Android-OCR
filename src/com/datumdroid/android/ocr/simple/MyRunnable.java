@@ -10,13 +10,27 @@ import java.util.Map;
 import android.util.Log;
 
 public class MyRunnable implements Runnable {
+	
+	private String searchKey;
+	private volatile String result;
+	
+	
+	public MyRunnable(String inputQuery){
+		searchKey = inputQuery;
+		
+	}
 
 	@Override
 	public void run() {
-		String result = sendGet("http://54.191.253.95/wiki.php","title=apple");	
-		Log.v("SimpleOCR","wikiRunnable: " + result);
-
+		result = sendGet("http://54.191.253.95/wiki.php","title="+searchKey);	
+		Log.v("SimpleOCR","wiki Runnable: " + result);
+		
 	}
+	
+	public String getResult() {
+        return result;
+    }
+	
 	public static String sendGet(String url, String param) {
         String result = "";
         BufferedReader in = null;

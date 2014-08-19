@@ -9,14 +9,26 @@ import java.util.Map;
 
 import android.util.Log;
 
+
 public class MyThread extends Thread {
+	private String searchKey;
+	private volatile String result;
+	
+	public MyThread(String inputQuery){
+		searchKey = inputQuery;
+		
+	}
 	
 	@Override
-	public void run() {
+	public synchronized void run() {
 		
-		String result = sendGet("http://54.191.253.95/wiki.php","title=apple");	
+		result = sendGet("http://54.191.253.95/wiki.php","title="+searchKey);	
 		Log.v("SimpleOCR","wikiThread: " + result);
+		
 	}
+	 public String getResult() {
+         return result;
+     }
 	
 	
 	public static String sendGet(String url, String param) {

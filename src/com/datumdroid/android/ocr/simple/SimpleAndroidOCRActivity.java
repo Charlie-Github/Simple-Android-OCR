@@ -1,12 +1,21 @@
 package com.datumdroid.android.ocr.simple;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.zip.GZIPInputStream;
+
+import org.apache.http.*;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -36,11 +45,12 @@ public class SimpleAndroidOCRActivity extends Activity {
 	// http://code.google.com/p/tesseract-ocr/downloads/list
 	public static final String lang = "eng";
 
-	private static final String TAG = "SimpleAndroidOCR.java";
+	private static final String TAG = "SimpleOCR";
 
 	protected Button _button;
 	// protected ImageView _image;
 	protected EditText _field;
+	
 	protected String _path;
 	protected boolean _taken;
 
@@ -98,31 +108,30 @@ public class SimpleAndroidOCRActivity extends Activity {
 
 		setContentView(R.layout.main);
 
+		
 		// _image = (ImageView) findViewById(R.id.image);
 		_field = (EditText) findViewById(R.id.field);
-		_button = (Button) findViewById(R.id.button);
-		_button.setOnClickListener(new ButtonClickHandler());
-
+		_button = (Button) findViewById(R.id.button);//need a downcasting
+		_button.setOnClickListener(new ButtonClickHandler());//event handler
+		
 		_path = DATA_PATH + "/ocr.jpg";
 	}
 
 	public class ButtonClickHandler implements View.OnClickListener {
+		//button handler class. Handle click event
 		public void onClick(View view) {
-			Log.v(TAG, "Starting Camera app");
+			Log.v(TAG, "Starting Camera");
 			startCameraActivity();
 		}
 	}
 
-	// Simple android photo capture:
-	// http://labs.makemachine.net/2010/03/simple-android-photo-capture/
-
 	protected void startCameraActivity() {
+		// Simple android photo capture:
+		// http://labs.makemachine.net/2010/03/simple-android-photo-capture/
 		File file = new File(_path);
 		Uri outputFileUri = Uri.fromFile(file);
-
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
 		startActivityForResult(intent, 0);
 	}
 
@@ -179,7 +188,7 @@ public class SimpleAndroidOCRActivity extends Activity {
 			case ExifInterface.ORIENTATION_ROTATE_270:
 				rotate = 270;
 				break;
-			}
+		}
 
 			Log.v(TAG, "Rotation: " + rotate);
 
@@ -201,12 +210,12 @@ public class SimpleAndroidOCRActivity extends Activity {
 			bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
 		} catch (IOException e) {
-			Log.e(TAG, "Couldn't correct orientation: " + e.toString());
+			Log.e(TAG, "Correct orientation failed: " + e.toString());
 		}
 
 		// _image.setImageBitmap( bitmap );
 		
-		Log.v(TAG, "Before baseApi");
+		Log.v(TAG, "Tesseract API begin");
 
 		TessBaseAPI baseApi = new TessBaseAPI();
 		baseApi.setDebug(true);
@@ -217,26 +226,85 @@ public class SimpleAndroidOCRActivity extends Activity {
 		
 		baseApi.end();
 
-		// You now have the text in recognizedText var, you can do anything with it.
-		// We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
-		// so that garbage doesn't make it to the display.
-
-		Log.v(TAG, "OCRED TEXT: " + recognizedText);
-
 		if ( lang.equalsIgnoreCase("eng") ) {
-			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", " ");
+			//remove dump marks
+			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9,.&-?!@%$*+=/]+", " ");
 		}
 		
 		recognizedText = recognizedText.trim();
-
-		if ( recognizedText.length() != 0 ) {
-			_field.setText(_field.getText().toString().length() == 0 ? recognizedText : _field.getText() + " " + recognizedText);
-			_field.setSelection(_field.getText().toString().length());
-		}
 		
-		// Cycle done.
-	}
+		Log.v(TAG, "Tesseract output: " + recognizedText);
+		
+		if ( recognizedText.length() != 0 ) {
+			_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
+			_field.setSelection(_field.getText().toString().length());
+		}		
+		
+		final String searchKey = recognizedText;
+		
+		MyThread wikiThread = new MyThread();
+		wikiThread.start();
+		
+		MyRunnable wikiRunnable = new MyRunnable();
+		new Thread(wikiRunnable).start();
+		
+		/*
+		//Thread for fetching wiki result. Stable
+		new Thread() {
+				@Override
+				public void run() {
+					String result = sendGet("http://54.191.253.95/wiki.php","title="+ searchKey);
+					Log.v(TAG, "wiki: "+ result );
+							
+				}
+			}.start();
+		*/
+
+	}// onPhotoTaken Ends
 	
-	// www.Gaut.am was here
-	// Thanks for reading!
+	public static String sendGet(String url, String param) {
+		// send GET request
+        String result = "";
+        BufferedReader in = null;
+        try {
+            String urlNameString = url + "?" + param;
+            URL realUrl = new URL(urlNameString);
+            // 打开和URL之间的连接
+            URLConnection connection = realUrl.openConnection();
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 建立实际的连接
+            connection.connect();
+            // 获取所有响应头字段
+            Map<String, List<String>> map = connection.getHeaderFields();
+            // 遍历所有的响应头字段
+            for (String key : map.keySet()) {
+                System.out.println(key + "--->" + map.get(key));
+            }
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        } catch (Exception e) {
+           Log.v(TAG,"发送GET请求出现异常！" + e);
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return result;
+    }
+	
 }

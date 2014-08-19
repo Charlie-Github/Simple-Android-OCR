@@ -18,6 +18,7 @@ public class TessRunnable implements Runnable {
 	
 	@Override
 	public void run() {
+		
 		result = recognize();
 
 	}

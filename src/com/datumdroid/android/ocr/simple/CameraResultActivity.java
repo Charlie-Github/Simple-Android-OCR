@@ -1,26 +1,10 @@
 package com.datumdroid.android.ocr.simple;
 
-import java.io.*;
-import java.net.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.zip.GZIPInputStream;
-
-import org.apache.http.*;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import java.io.File;
+import java.io.IOException;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -30,110 +14,38 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.googlecode.tesseract.android.TessBaseAPI;
-
-public class SimpleAndroidOCRActivity extends Activity {
+public class CameraResultActivity extends Activity {
 	public static final String PACKAGE_NAME = "com.datumdroid.android.ocr.simple";
 	public static final String DATA_PATH = Environment
-			.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
-	
-	// You should have the trained data file in assets folder
-	// You can get them at:
-	// http://code.google.com/p/tesseract-ocr/downloads/list
+			.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";	
+
 	public static final String lang = "eng";
 
 	private static final String TAG = "SimpleOCR";
 
-	protected Button _button;
-	// protected ImageView _image;
-	protected EditText _field;
-	protected EditText _field2;
+	protected EditText _field3;
+	protected EditText _field4;
 	
 	protected String _path;
 	protected boolean _taken;
-
 	protected static final String PHOTO_TAKEN = "photo_taken";
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-
-		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
-
-		for (String path : paths) {
-			File dir = new File(path);
-			if (!dir.exists()) {
-				if (!dir.mkdirs()) {
-					Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
-					return;
-				} else {
-					Log.v(TAG, "Created directory " + path + " on sdcard");
-				}
-			}
-
-		}
-		
-		// lang.traineddata file with the app (in assets folder)
-		// You can get them at:
-		// http://code.google.com/p/tesseract-ocr/downloads/list
-		// This area needs work and optimization
-		if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists()) {
-			try {
-
-				AssetManager assetManager = getAssets();
-				InputStream in = assetManager.open("tessdata/" + lang + ".traineddata");
-				//GZIPInputStream gin = new GZIPInputStream(in);
-				OutputStream out = new FileOutputStream(DATA_PATH
-						+ "tessdata/" + lang + ".traineddata");
-
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				//while ((lenf = gin.read(buff)) > 0) {
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
-				in.close();
-				//gin.close();
-				out.close();
-				
-				Log.v(TAG, "Copied " + lang + " traineddata");
-			} catch (IOException e) {
-				Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
-			}
-		}
-
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.main);
-
-		
-		
-		_field = (EditText) findViewById(R.id.field);
-		_field2 = (EditText) findViewById(R.id.filed2);
-		_button = (Button) findViewById(R.id.button);//need a downcasting
-		_button.setOnClickListener(new ButtonClickHandler());//event handler
-		
+		setContentView(R.layout.camera_result);
+		_field3 = (EditText) findViewById(R.id.field3);
+		_field4 = (EditText) findViewById(R.id.filed4);
 		_path = DATA_PATH + "/ocr.jpg";
-	}
-
-	public class ButtonClickHandler implements View.OnClickListener {
-		//button handler class. Handle click event
-		public void onClick(View view) {
-			Log.v(TAG, "Starting Camera");
-			startCameraActivity();//sample
-			
-		}
+		startCameraActivity();
 	}
 
 	protected void startCameraActivity() {
-		
-		Intent intent = new Intent(this, CameraResultActivity.class);
-		startActivity(intent);
-		/*
 		// Simple android photo capture:
 		// http://labs.makemachine.net/2010/03/simple-android-photo-capture/
 		File file = new File(_path);
@@ -141,9 +53,9 @@ public class SimpleAndroidOCRActivity extends Activity {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);		
 		startActivityForResult(intent, 0);//tells the system that when the user is done with the camera app to return to this activity 
-		*/
+		 onPhotoTaken();
 	}
-
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -151,15 +63,14 @@ public class SimpleAndroidOCRActivity extends Activity {
 
 		if (resultCode == -1) {
 			
-			onPhotoTaken();
+			//onPhotoTaken();
 						
 		} else {
 			Log.v(TAG, "User cancelled");
 		}
 	}
 
-	protected void onPhotoTaken() {
-	
+	protected void onPhotoTaken() {	
 		
 		_taken = true;		
 
@@ -221,13 +132,17 @@ public class SimpleAndroidOCRActivity extends Activity {
 		Thread tessThread = new Thread(tessRunnable);
 		tessThread.start();
 		
+		
 		try {
 			tessThread.join();
 		} catch (InterruptedException e) {
 			Log.v(TAG,"tessThread Join Fail: "+ e.getMessage());
 		}
 		
-		String recognizedText = tessRunnable.getResult();
+		
+		
+		String	recognizedText = tessRunnable.getResult();
+	
 		
 		//Ends Tess		
 		
@@ -241,8 +156,8 @@ public class SimpleAndroidOCRActivity extends Activity {
 		Log.v(TAG, "Tesseract output: " + recognizedText);
 		
 		if ( recognizedText.length() != 0 ) {
-			_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
-			_field.setSelection(_field.getText().toString().length());
+			_field3.setText(recognizedText);
+			_field3.setSelection(_field3.getText().toString().length());
 		}		
 		
 		final String searchKey = recognizedText;
@@ -250,9 +165,12 @@ public class SimpleAndroidOCRActivity extends Activity {
 		MyThread wikiThread = new MyThread(searchKey);
 		wikiThread.start();
 		*/
+		
+		
 		MyRunnable wikiRunnable = new MyRunnable(searchKey);
 		Thread wikiThread = new Thread(wikiRunnable);
 		wikiThread.start();
+		
 		
 		try {
 			wikiThread.join();
@@ -260,15 +178,15 @@ public class SimpleAndroidOCRActivity extends Activity {
 			Log.v(TAG,"wikiThread Join Fail: "+ e.getMessage());
 		}
 		
-		String result = wikiRunnable.getResult();
 		
-		_field2.setText(result);
-		_field2.setSelection(0);
+		String wikiresult = "";					
+		wikiresult = wikiRunnable.getResult();
+	
+		
+		_field4.setText(wikiresult);
+		_field4.setSelection(0);
 		
 		
 
 	}// onPhotoTaken Ends
-	
-	
-	
 }

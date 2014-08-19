@@ -57,7 +57,7 @@ public class MyRunnable implements Runnable {
                     connection.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
-                result += line;
+                result += line+"\r\n";
             }
         } catch (Exception e) {
            Log.v("simpleOCR","发送GET请求出现异常！" + e);

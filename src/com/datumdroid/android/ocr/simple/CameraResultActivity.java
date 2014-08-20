@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -34,6 +37,10 @@ public class CameraResultActivity extends Activity {
 	protected String _path;
 	protected boolean _taken;
 	protected static final String PHOTO_TAKEN = "photo_taken";
+	
+	private ProgressDialog progressDialog;
+	
+	private SQLiteDatabase database;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,21 @@ public class CameraResultActivity extends Activity {
 		_field3 = (EditText) findViewById(R.id.field3);
 		_field4 = (EditText) findViewById(R.id.filed4);
 		_path = DATA_PATH + "/ocr.jpg";
+		
+		ExternalDbOpenHelper dbOpenHelper = new ExternalDbOpenHelper(this,"localDB.db");
+		database = dbOpenHelper.openDataBase();		
+		
+		Cursor friendCursor = database.query("Chinese",new String[]{"name"}, "_id = 1",null, null, null, null);
+		friendCursor.moveToFirst();
+		if(!friendCursor.isAfterLast()) {
+            do {
+                String name = friendCursor.getString(0);
+                Log.i(TAG, "Chinese: "+name);
+            } while (friendCursor.moveToNext());
+        }
+        friendCursor.close();
+		
+		
 		startCameraActivity();
 	}
 
@@ -51,9 +73,11 @@ public class CameraResultActivity extends Activity {
 		File file = new File(_path);
 		Uri outputFileUri = Uri.fromFile(file);
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);		
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 		startActivityForResult(intent, 0);//tells the system that when the user is done with the camera app to return to this activity 
-		readImage();
+		
+		//progressDialog = ProgressDialog.show(CameraResultActivity.this, "", "Loading...");		
+		//progressDialog.dismiss();
 	}
 	
 	@Override
@@ -61,18 +85,17 @@ public class CameraResultActivity extends Activity {
 
 		Log.i(TAG, "resultCode: " + resultCode);
 
-		if (resultCode == -1) {
-			
+		if (resultCode == -1) {			
 			//onPhotoTaken();
+			_taken = true;
+			readImage();
 						
 		} else {
 			Log.v(TAG, "User cancelled");
 		}
 	}
 	
-	protected void readImage() {	
-			
-			_taken = true;		
+	protected void readImage() {
 	
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 4;
@@ -126,50 +149,21 @@ public class CameraResultActivity extends Activity {
 	
 			Log.v(TAG, "Tesseract API begin");	
 			
-			// Start Tess
-			
-			TessRunnable tessRunnable = new TessRunnable(DATA_PATH,lang,bitmap);
-			Thread tessThread = new Thread(tessRunnable);
-			tessThread.start();
-			
-			
-			try {
-				tessThread.join();
-			} catch (InterruptedException e) {
-				Log.v(TAG,"tessThread Join Fail: "+ e.getMessage());
-			}
-			
-			
-			
-			String	recognizedText = tessRunnable.getResult();
-		
-			
+			// Start Tess			
+			TessHelper tesshelper = new TessHelper(DATA_PATH,lang,bitmap);			
+			String recognizedText = tesshelper.recognize();			
 			//Ends Tess		
-			
-			if ( lang.equalsIgnoreCase("eng") ) {
-				//remove dump marks
-				recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9,.&-?!@%$*+=/]+", " ");
-			}
-			
-			recognizedText = recognizedText.trim();
 			
 			Log.v(TAG, "Tesseract output: " + recognizedText);
 			
-			
-			
-			
-			
-			if ( recognizedText.length() != 0 ) {
-				_field3.setText(recognizedText);
-				_field3.setSelection(_field3.getText().toString().length());
-			}		
+			_field3.setText(recognizedText);
+			_field3.setSelection(_field3.getText().toString().length());
 			
 			final String searchKey = recognizedText;
 			/*
 			MyThread wikiThread = new MyThread(searchKey);
 			wikiThread.start();
-			*/
-			
+			*/			
 			
 			MyRunnable wikiRunnable = new MyRunnable(searchKey);
 			Thread wikiThread = new Thread(wikiRunnable);
@@ -180,137 +174,13 @@ public class CameraResultActivity extends Activity {
 				wikiThread.join();
 			} catch (InterruptedException e) {
 				Log.v(TAG,"wikiThread Join Fail: "+ e.getMessage());
-			}
-			
+			}			
 			
 			String wikiresult = "";					
-			wikiresult = wikiRunnable.getResult();
-		
+			wikiresult = wikiRunnable.getResult();		
 			
 			_field4.setText(wikiresult);
-			_field4.setSelection(0);
-			
-			
+			_field4.setSelection(0);			
 	
-		}// onPhotoTaken Ends
-
-	protected void onPhotoTaken() {	
-		
-		_taken = true;		
-
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 4;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(_path, options);
-
-		try {
-			ExifInterface exif = new ExifInterface(_path);
-			int exifOrientation = exif.getAttributeInt(
-					ExifInterface.TAG_ORIENTATION,
-					ExifInterface.ORIENTATION_NORMAL);
-
-			Log.v(TAG, "Orient: " + exifOrientation);
-
-			int rotate = 0;
-
-			switch (exifOrientation) {
-			case ExifInterface.ORIENTATION_ROTATE_90:
-				rotate = 90;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_180:
-				rotate = 180;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_270:
-				rotate = 270;
-				break;
-		}
-
-			Log.v(TAG, "Rotation: " + rotate);
-
-			if (rotate != 0) {
-
-				// Getting width & height of the given image.
-				int w = bitmap.getWidth();
-				int h = bitmap.getHeight();
-
-				// Setting pre rotate
-				Matrix mtx = new Matrix();
-				mtx.preRotate(rotate);
-
-				// Rotating Bitmap
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-			}
-
-			// Convert to ARGB_8888, required by tess
-			bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-		} catch (IOException e) {
-			Log.e(TAG, "Correct orientation failed: " + e.toString());
-		}
-
-		Log.v(TAG, "Tesseract API begin");	
-		
-		// Start Tess
-		
-		TessRunnable tessRunnable = new TessRunnable(DATA_PATH,lang,bitmap);
-		Thread tessThread = new Thread(tessRunnable);
-		tessThread.start();
-		
-		
-		try {
-			tessThread.join();
-		} catch (InterruptedException e) {
-			Log.v(TAG,"tessThread Join Fail: "+ e.getMessage());
-		}
-		
-		
-		
-		String	recognizedText = tessRunnable.getResult();
-	
-		
-		//Ends Tess		
-		
-		if ( lang.equalsIgnoreCase("eng") ) {
-			//remove dump marks
-			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9,.&-?!@%$*+=/]+", " ");
-		}
-		
-		recognizedText = recognizedText.trim();
-		
-		Log.v(TAG, "Tesseract output: " + recognizedText);
-		
-		if ( recognizedText.length() != 0 ) {
-			_field3.setText(recognizedText);
-			_field3.setSelection(_field3.getText().toString().length());
-		}		
-		
-		final String searchKey = recognizedText;
-		/*
-		MyThread wikiThread = new MyThread(searchKey);
-		wikiThread.start();
-		*/
-		
-		
-		MyRunnable wikiRunnable = new MyRunnable(searchKey);
-		Thread wikiThread = new Thread(wikiRunnable);
-		wikiThread.start();
-		
-		
-		try {
-			wikiThread.join();
-		} catch (InterruptedException e) {
-			Log.v(TAG,"wikiThread Join Fail: "+ e.getMessage());
-		}
-		
-		
-		String wikiresult = "";					
-		wikiresult = wikiRunnable.getResult();
-	
-		
-		_field4.setText(wikiresult);
-		_field4.setSelection(0);
-		
-		
-
-	}// onPhotoTaken Ends
+		}// readImage Ends
 }

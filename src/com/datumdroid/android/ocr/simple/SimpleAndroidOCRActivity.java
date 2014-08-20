@@ -73,7 +73,6 @@ public class SimpleAndroidOCRActivity extends Activity {
 					Log.v(TAG, "Created directory " + path + " on sdcard");
 				}
 			}
-
 		}
 		
 		// lang.traineddata file with the app (in assets folder)
@@ -92,12 +91,11 @@ public class SimpleAndroidOCRActivity extends Activity {
 				// Transfer bytes from in to out
 				byte[] buf = new byte[1024];
 				int len;
-				//while ((lenf = gin.read(buff)) > 0) {
+				
 				while ((len = in.read(buf)) > 0) {
 					out.write(buf, 0, len);
 				}
-				in.close();
-				//gin.close();
+				in.close();				
 				out.close();
 				
 				Log.v(TAG, "Copied " + lang + " traineddata");
@@ -108,9 +106,7 @@ public class SimpleAndroidOCRActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.main);
-
-		
+		setContentView(R.layout.main);		
 		
 		_field = (EditText) findViewById(R.id.field);
 		_field2 = (EditText) findViewById(R.id.filed2);
@@ -123,152 +119,11 @@ public class SimpleAndroidOCRActivity extends Activity {
 	public class ButtonClickHandler implements View.OnClickListener {
 		//button handler class. Handle click event
 		public void onClick(View view) {
-			Log.v(TAG, "Starting Camera");
-			startCameraActivity();//sample
-			
+			Log.v(TAG, "Starting CameraResultIntent");
+			//startCameraActivity();//sample
+			Intent intent = new Intent(SimpleAndroidOCRActivity.this, CameraResultActivity.class);
+			startActivity(intent);
 		}
-	}
-
-	protected void startCameraActivity() {
-		
-		Intent intent = new Intent(this, CameraResultActivity.class);
-		startActivity(intent);
-		/*
-		// Simple android photo capture:
-		// http://labs.makemachine.net/2010/03/simple-android-photo-capture/
-		File file = new File(_path);
-		Uri outputFileUri = Uri.fromFile(file);
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);		
-		startActivityForResult(intent, 0);//tells the system that when the user is done with the camera app to return to this activity 
-		*/
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		Log.i(TAG, "resultCode: " + resultCode);
-
-		if (resultCode == -1) {
-			
-			onPhotoTaken();
-						
-		} else {
-			Log.v(TAG, "User cancelled");
-		}
-	}
-
-	protected void onPhotoTaken() {
-	
-		
-		_taken = true;		
-
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 4;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(_path, options);
-
-		try {
-			ExifInterface exif = new ExifInterface(_path);
-			int exifOrientation = exif.getAttributeInt(
-					ExifInterface.TAG_ORIENTATION,
-					ExifInterface.ORIENTATION_NORMAL);
-
-			Log.v(TAG, "Orient: " + exifOrientation);
-
-			int rotate = 0;
-
-			switch (exifOrientation) {
-			case ExifInterface.ORIENTATION_ROTATE_90:
-				rotate = 90;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_180:
-				rotate = 180;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_270:
-				rotate = 270;
-				break;
-		}
-
-			Log.v(TAG, "Rotation: " + rotate);
-
-			if (rotate != 0) {
-
-				// Getting width & height of the given image.
-				int w = bitmap.getWidth();
-				int h = bitmap.getHeight();
-
-				// Setting pre rotate
-				Matrix mtx = new Matrix();
-				mtx.preRotate(rotate);
-
-				// Rotating Bitmap
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-			}
-
-			// Convert to ARGB_8888, required by tess
-			bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-		} catch (IOException e) {
-			Log.e(TAG, "Correct orientation failed: " + e.toString());
-		}
-
-		Log.v(TAG, "Tesseract API begin");	
-		
-		// Start Tess
-		
-		TessRunnable tessRunnable = new TessRunnable(DATA_PATH,lang,bitmap);
-		Thread tessThread = new Thread(tessRunnable);
-		tessThread.start();
-		
-		try {
-			tessThread.join();
-		} catch (InterruptedException e) {
-			Log.v(TAG,"tessThread Join Fail: "+ e.getMessage());
-		}
-		
-		String recognizedText = tessRunnable.getResult();
-		
-		//Ends Tess		
-		
-		if ( lang.equalsIgnoreCase("eng") ) {
-			//remove dump marks
-			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9,.&-?!@%$*+=/]+", " ");
-		}
-		
-		recognizedText = recognizedText.trim();
-		
-		Log.v(TAG, "Tesseract output: " + recognizedText);
-		
-		if ( recognizedText.length() != 0 ) {
-			_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
-			_field.setSelection(_field.getText().toString().length());
-		}		
-		
-		final String searchKey = recognizedText;
-		/*
-		MyThread wikiThread = new MyThread(searchKey);
-		wikiThread.start();
-		*/
-		MyRunnable wikiRunnable = new MyRunnable(searchKey);
-		Thread wikiThread = new Thread(wikiRunnable);
-		wikiThread.start();
-		
-		try {
-			wikiThread.join();
-		} catch (InterruptedException e) {
-			Log.v(TAG,"wikiThread Join Fail: "+ e.getMessage());
-		}
-		
-		String result = wikiRunnable.getResult();
-		
-		_field2.setText(result);
-		_field2.setSelection(0);
-		
-		
-
-	}// onPhotoTaken Ends
-	
-	
+	}	
 	
 }

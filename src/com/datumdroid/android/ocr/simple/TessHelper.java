@@ -4,24 +4,16 @@ import android.graphics.Bitmap;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-public class TessRunnable implements Runnable {
+public class TessHelper   {
 	private String DATA_PATH;
 	private String lang;
-	private Bitmap bitmap;
-	private volatile String result;
+	private Bitmap bitmap;	
 	
-	public TessRunnable(String path, String language, Bitmap bit){
+	public TessHelper(String path, String language, Bitmap bit){
 		DATA_PATH = path;
 		lang = language;
 		bitmap = bit;		
-	}
-	
-	@Override
-	public void run() {
-		
-		result = recognize();
-
-	}
+	}	
 	
 	public String recognize(){
 		TessBaseAPI baseApi = new TessBaseAPI();
@@ -30,14 +22,17 @@ public class TessRunnable implements Runnable {
 		baseApi.setImage(bitmap);		
 		String recognizedText = baseApi.getUTF8Text();
 		
-		baseApi.end();	
+		baseApi.end();
+		
+		if ( lang.equalsIgnoreCase("eng") ) {
+			//remove dump marks
+			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9,.&-?!@%$*+=/]+", " ");
+		}
+		
+		recognizedText = recognizedText.trim();
 		
 		return recognizedText;
 		
 	}
 	
-	public String getResult() {
-        return result;
-    }
-
 }

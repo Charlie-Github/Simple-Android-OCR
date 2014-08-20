@@ -50,20 +50,6 @@ public class CameraResultActivity extends Activity {
 		_field4 = (EditText) findViewById(R.id.filed4);
 		_path = DATA_PATH + "/ocr.jpg";
 		
-		ExternalDbOpenHelper dbOpenHelper = new ExternalDbOpenHelper(this,"localDB.db");
-		database = dbOpenHelper.openDataBase();		
-		
-		Cursor friendCursor = database.query("Chinese",new String[]{"name"}, "_id = 1",null, null, null, null);
-		friendCursor.moveToFirst();
-		if(!friendCursor.isAfterLast()) {
-            do {
-                String name = friendCursor.getString(0);
-                Log.i(TAG, "Chinese: "+name);
-            } while (friendCursor.moveToNext());
-        }
-        friendCursor.close();
-		
-		
 		startCameraActivity();
 	}
 
@@ -159,6 +145,16 @@ public class CameraResultActivity extends Activity {
 			_field3.setText(recognizedText);
 			_field3.setSelection(_field3.getText().toString().length());
 			
+			// Local search begin				
+			LocalDbOperator ldboperator = new LocalDbOperator(this);
+			int fid = ldboperator.searchByName(recognizedText);
+			String chinese_name = ldboperator.searchById(fid);
+			Log.i(TAG,"Translate: "+chinese_name);
+			// Local search Ends
+			
+			
+			
+			// Wiki search begin
 			final String searchKey = recognizedText;
 			/*
 			MyThread wikiThread = new MyThread(searchKey);

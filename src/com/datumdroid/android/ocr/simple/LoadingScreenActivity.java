@@ -16,15 +16,13 @@ public class LoadingScreenActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 	
 	super.onCreate(savedInstanceState);
-	System.out.println("LoadingScreenActivity  screen started");
+	
 	setContentView(R.layout.loading_screen);
 	findViewById(R.id.mainSpinner1).setVisibility(View.VISIBLE);
 
 	new Handler().postDelayed(new Runnable(){ 
 	@Override 
-	    public void run() { 
-               
-		    System.out.println("Going to Profile Data");	  
+	    public void run() { 	    	  
 		    LoadingScreenActivity.this.finish(); 
 		} 
 	}, WAIT_TIME);

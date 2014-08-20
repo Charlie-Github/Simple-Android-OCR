@@ -49,7 +49,7 @@ public class CameraResultActivity extends Activity {
 		_field3 = (EditText) findViewById(R.id.field3);
 		_field4 = (EditText) findViewById(R.id.filed4);
 		_path = DATA_PATH + "/ocr.jpg";
-		
+		Log.i(TAG,"Path: "+DATA_PATH);
 		startCameraActivity();
 	}
 
@@ -61,9 +61,7 @@ public class CameraResultActivity extends Activity {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 		startActivityForResult(intent, 0);//tells the system that when the user is done with the camera app to return to this activity 
-		
-		//progressDialog = ProgressDialog.show(CameraResultActivity.this, "", "Loading...");		
-		//progressDialog.dismiss();
+
 	}
 	
 	@Override
@@ -74,6 +72,7 @@ public class CameraResultActivity extends Activity {
 		if (resultCode == -1) {			
 			//onPhotoTaken();
 			_taken = true;
+			
 			readImage();
 						
 		} else {
@@ -134,37 +133,37 @@ public class CameraResultActivity extends Activity {
 			}
 	
 			Log.v(TAG, "Tesseract API begin");	
+			String recognizedText = "";
 			
+			/*
 			// Start Tess			
 			TessHelper tesshelper = new TessHelper(DATA_PATH,lang,bitmap);			
 			String recognizedText = tesshelper.recognize();			
-			//Ends Tess		
+			//Ends Tess
+			*/
 			
-			Log.v(TAG, "Tesseract output: " + recognizedText);
+			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_field3,_field4,this);//"this"is context
+			 tesshp.execute();
 			
-			_field3.setText(recognizedText);
-			_field3.setSelection(_field3.getText().toString().length());
+			
+			//_field3.setText(recognizedText);
+			//_field3.setSelection(_field3.getText().toString().length());
 			
 			// Local search begin				
-			LocalDbOperator ldboperator = new LocalDbOperator(this);
-			int fid = ldboperator.searchByName(recognizedText);
-			String chinese_name = ldboperator.searchById(fid);
-			Log.i(TAG,"Translate: "+chinese_name);
+			//LocalDbOperator ldboperator = new LocalDbOperator(this);
+			//ldboperator.search(recognizedText);
+			//int fid = ldboperator.searchByName(recognizedText);
+			//String chinese_name = ldboperator.searchById(fid);
+			//Log.i(TAG,"Translate: "+chinese_name);
 			// Local search Ends
 			
-			
-			
+			 /*
 			// Wiki search begin
 			final String searchKey = recognizedText;
-			/*
-			MyThread wikiThread = new MyThread(searchKey);
-			wikiThread.start();
-			*/			
 			
 			MyRunnable wikiRunnable = new MyRunnable(searchKey);
 			Thread wikiThread = new Thread(wikiRunnable);
-			wikiThread.start();
-			
+			wikiThread.start();		
 			
 			try {
 				wikiThread.join();
@@ -173,10 +172,12 @@ public class CameraResultActivity extends Activity {
 			}			
 			
 			String wikiresult = "";					
-			wikiresult = wikiRunnable.getResult();		
+			wikiresult = wikiRunnable.getResult();
+			// Wiki search ends
 			
 			_field4.setText(wikiresult);
-			_field4.setSelection(0);			
+			_field4.setSelection(0);
+			*/
 	
 		}// readImage Ends
 }

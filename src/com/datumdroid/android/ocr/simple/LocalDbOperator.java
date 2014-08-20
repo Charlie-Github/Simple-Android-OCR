@@ -1,5 +1,7 @@
 package com.datumdroid.android.ocr.simple;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,11 +11,31 @@ import android.util.Log;
 public class LocalDbOperator {
 	private ExternalDbOpenHelper dbOpenHelper;
 	private SQLiteDatabase database;
+	private TextParser textparser;
 	
 	public LocalDbOperator(Context context){
 		dbOpenHelper = new ExternalDbOpenHelper(context,"localDB.db");
 		database = dbOpenHelper.openDataBase();		
 	}
+	
+	public String[] search(String fromTess){
+		
+		String[] translates = TextParser.spliteAll(fromTess);
+		
+		ArrayList<String> translated = new ArrayList<String>();
+		for(int i = 0; i < translates.length; i++){			
+			int fid = this.searchByName(translates[i]);
+			String chinese_name = this.searchById(fid);
+			if(chinese_name != ""){
+				translated.add(chinese_name);
+				Log.i("LocalDB","Translate: "+chinese_name);
+			}
+		}
+		
+		String[] array = translated.toArray(new String[translated.size()]);
+		return array;
+	}
+	
 	public String searchById(int id){
 		//search Chinese name by id
 		//Local DB test		

@@ -1,40 +1,53 @@
 package com.datumdroid.android.ocr.simple;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-public class TessHelper extends AsyncTask<String,String,String> {
+public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String DATA_PATH;
 	private String lang;
 	private Bitmap bitmap;	
 	private EditText _field_tess;
-	private EditText _field_wiki;
+	protected ImageView _imageView;
+	protected String image_path;
+	protected Uri imageUri;
+
 	private LinearLayout _linearlayout;
 	private Context context;
-	private String wikiresult;
+	
 	private String recognizedText;
 	private String[] keywords;
 	
-	public TessHelper(String path, String language, Bitmap bit,EditText _field3,EditText _field4,LinearLayout ex_linearlayout,Context ex_context){
+	public TessHelper(String path, String language, Bitmap bit, EditText _field3, ImageView ex_imageView, LinearLayout ex_linearlayout, Context ex_context){
 		DATA_PATH = path;
+		image_path = path + "/ocr.jpg";
 		lang = language;
 		bitmap = bit;
 		_field_tess = _field3;
-		_field_wiki = _field4;
+		_imageView = ex_imageView;
+		
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
-		wikiresult = "";
+		
+		
+		File file = new File(image_path);
+		imageUri = Uri.fromFile(file);
+
 	}	
 	
 	 @Override
@@ -67,36 +80,22 @@ public class TessHelper extends AsyncTask<String,String,String> {
 
 	@Override
 	protected String doInBackground(String... params) {
+		
+		publishProgress(1);
 		recognizedText = recognize();
 		
 		//local search begin
 		LocalDbOperator ldboperator = new LocalDbOperator(context);
 		keywords = ldboperator.search(recognizedText);
 		
-		//local search ends
+		//local search ends		
 		
-		// Wiki search begin
-		final String searchKey = recognizedText;
-		
-		MyRunnable wikiRunnable = new MyRunnable(searchKey);
-		Thread wikiThread = new Thread(wikiRunnable);
-		wikiThread.start();		
-		
-		try {
-			wikiThread.join();
-		} catch (InterruptedException e) {
-			Log.v("SimpleOCR","wikiThread Join Fail: "+ e.getMessage());
-		}				
-							
-		wikiresult = wikiRunnable.getResult();
 		return recognizedText;
 	}
 	
 	protected void setfields(){
-		_field_tess.setText(recognizedText);
-		_field_tess.setSelection(0);
-		_field_wiki.setText(wikiresult);
-		_field_wiki.setSelection(0);		
+		_field_tess.setText("");
+		//_field_tess.setSelection(0);		
 		
 		for(int i = 0; i<keywords.length; i++){
 			String[] key_pair = keywords[i].split("\\|");
@@ -125,10 +124,11 @@ public class TessHelper extends AsyncTask<String,String,String> {
 	protected void onPostExecute(String Text) {
 	   // execution of result of Long time consuming operation
 		setfields();
-		
+		_imageView.setImageURI(imageUri);
 	  }
 	
 	protected void onProgressUpdate(Integer... progress) {
+		_field_tess.setText("Analysying Image ...");
 		
     }
     

@@ -1,6 +1,7 @@
 package com.datumdroid.android.ocr.simple;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,7 @@ public class FoodDetailActivity extends Activity {
 	// protected ImageView _image;
 		protected EditText _field5;
 		protected EditText _field6;
+		protected EditText _field7;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,11 +20,15 @@ public class FoodDetailActivity extends Activity {
 		setContentView(R.layout.food_detail);
 		_field5 = (EditText) findViewById(R.id.field5);
 		_field6 = (EditText) findViewById(R.id.filed6);
+		_field7 = (EditText) findViewById(R.id.filed7);
 		Intent intent = getIntent();
 		String foodTitlte = intent.getStringExtra("FOOD_TITLE");
 		String foodName = intent.getStringExtra("FOOD_NAME");
 		_field5.setText(foodTitlte);
 		_field6.setText(foodName);
+		
+		wikiHelper whelper = new wikiHelper(foodTitlte,_field7,this);
+		whelper.execute();
 	}
 
 	@Override

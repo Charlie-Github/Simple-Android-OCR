@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class CameraResultActivity extends Activity {
@@ -33,7 +34,7 @@ public class CameraResultActivity extends Activity {
 	private static final String TAG = "SimpleOCR";
 
 	protected EditText _field3;
-	protected EditText _field4;
+	protected ImageView _imageView;
 	protected LinearLayout scroll_layout;
 	
 	protected String _path;
@@ -49,25 +50,13 @@ public class CameraResultActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera_result);
 		_field3 = (EditText) findViewById(R.id.field3);
-		_field4 = (EditText) findViewById(R.id.filed4);
+		_imageView = (ImageView)findViewById(R.id.imagview);		
 		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);
+		
 		_path = DATA_PATH + "/ocr.jpg";
+		
 		Log.i(TAG,"Path: "+DATA_PATH);
 		startCameraActivity();
-		
-		/*below here, test dynamic button*/
-		/*
-		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);		
-		for(int i = 0; i<7;i++){
-			Button button0 = new Button(this);
-			button0.setText("aButton0");
-			scroll_layout.addView(button0);
-		}
-		
-		*/
-		/*Test ends here*/
-		
-		
 		
 	}
 
@@ -78,7 +67,7 @@ public class CameraResultActivity extends Activity {
 		Uri outputFileUri = Uri.fromFile(file);
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-		startActivityForResult(intent, 0);//tells the system that when the user is done with the camera app to return to this activity 
+		startActivityForResult(intent, 0);
 
 	}
 	
@@ -160,7 +149,7 @@ public class CameraResultActivity extends Activity {
 			//Ends Tess
 			*/
 			
-			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_field3,_field4,scroll_layout,this);//"this"is context
+			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_field3,_imageView,scroll_layout,this);//"this"is context
 			 tesshp.execute();
 			
 			

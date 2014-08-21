@@ -114,6 +114,13 @@ public class SimpleAndroidOCRActivity extends Activity {
 		_button.setOnClickListener(new ButtonClickHandler());//event handler
 		
 		_path = DATA_PATH + "/ocr.jpg";
+		
+		Intent intent = getIntent();
+		String foodTitlte = intent.getStringExtra("FOOD_TITLE");
+		String foodName = intent.getStringExtra("FOOD_NAME");
+		_field.setText(foodTitlte);
+		_field2.setText(foodName);
+		
 	}
 
 	public class ButtonClickHandler implements View.OnClickListener {

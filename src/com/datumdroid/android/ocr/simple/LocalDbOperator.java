@@ -27,7 +27,7 @@ public class LocalDbOperator {
 			int fid = this.searchByName(translates[i]);
 			String chinese_name = this.searchById(fid);
 			if(chinese_name != ""){
-				translated.add(chinese_name);
+				translated.add(translates[i]+"|"+chinese_name);// en_Name|zh_name, pair
 				Log.i("LocalDB","Translate: "+chinese_name);
 			}
 		}

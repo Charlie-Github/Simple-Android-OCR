@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 public class CameraResultActivity extends Activity {
 	public static final String PACKAGE_NAME = "com.datumdroid.android.ocr.simple";
@@ -33,6 +34,7 @@ public class CameraResultActivity extends Activity {
 
 	protected EditText _field3;
 	protected EditText _field4;
+	protected LinearLayout scroll_layout;
 	
 	protected String _path;
 	protected boolean _taken;
@@ -48,9 +50,25 @@ public class CameraResultActivity extends Activity {
 		setContentView(R.layout.camera_result);
 		_field3 = (EditText) findViewById(R.id.field3);
 		_field4 = (EditText) findViewById(R.id.filed4);
+		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);
 		_path = DATA_PATH + "/ocr.jpg";
 		Log.i(TAG,"Path: "+DATA_PATH);
 		startCameraActivity();
+		
+		/*below here, test dynamic button*/
+		/*
+		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);		
+		for(int i = 0; i<7;i++){
+			Button button0 = new Button(this);
+			button0.setText("aButton0");
+			scroll_layout.addView(button0);
+		}
+		
+		*/
+		/*Test ends here*/
+		
+		
+		
 	}
 
 	protected void startCameraActivity() {
@@ -142,7 +160,7 @@ public class CameraResultActivity extends Activity {
 			//Ends Tess
 			*/
 			
-			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_field3,_field4,this);//"this"is context
+			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_field3,_field4,scroll_layout,this);//"this"is context
 			 tesshp.execute();
 			
 			

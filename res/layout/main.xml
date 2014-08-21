@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/android_main_background" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/button_text" />
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background = "#00000000"/>
 
-    <EditText
-        android:id="@+id/field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/text_hint" />
-
-    <EditText
-        android:id="@+id/filed2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
-
-</LinearLayout>
+</RelativeLayout>

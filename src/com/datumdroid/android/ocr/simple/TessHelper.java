@@ -7,9 +7,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +24,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String DATA_PATH;
 	private String lang;
 	private Bitmap bitmap;	
-	private EditText _field_tess;
+	
 	protected ImageView _imageView;
 	protected String image_path;
 	protected Uri imageUri;
@@ -30,17 +32,19 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private LinearLayout _linearlayout;
 	private Context context;
 	
+	protected ProgressDialog _progressDialog;
+	
 	private String recognizedText;
 	private String[] keywords;
 	
-	public TessHelper(String path, String language, Bitmap bit, EditText _field3, ImageView ex_imageView, LinearLayout ex_linearlayout, Context ex_context){
+	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		DATA_PATH = path;
 		image_path = path + "/ocr.jpg";
 		lang = language;
 		bitmap = bit;
-		_field_tess = _field3;
-		_imageView = ex_imageView;
 		
+		_imageView = ex_imageView;
+		_progressDialog = progressDialog;
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
 		
@@ -81,7 +85,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	@Override
 	protected String doInBackground(String... params) {
 		
-		publishProgress(1);
+		publishProgress(1);//call onProgressUpdate
 		recognizedText = recognize();
 		
 		//local search begin
@@ -94,8 +98,6 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	}
 	
 	protected void setfields(){
-		_field_tess.setText("");
-		//_field_tess.setSelection(0);		
 		
 		for(int i = 0; i<keywords.length; i++){
 			String[] key_pair = keywords[i].split("\\|");
@@ -103,6 +105,15 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 			final String name = key_pair[1];
 			Button button = new Button(context);
 			button.setText(title+" \n"+name);
+			
+			//set button height
+			int dps = 100;
+			float scale = context.getResources().getDisplayMetrics().density;			
+			int pixels = (int) (dps * scale + 0.5f);
+			button.setHeight(pixels);
+			button.setBackgroundColor(Color.WHITE);
+			button.setGravity(Gravity.CENTER_VERTICAL);
+			
 			_linearlayout.addView(button);
 			button.setOnClickListener(new View.OnClickListener() {				
 				@Override
@@ -118,6 +129,28 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 			
 		}
 		
+		// Go back botton
+		Button button = new Button(context);
+		button.setText("Take Pictur \nAgain");
+		
+		//set button height
+		int dps = 100;
+		float scale = context.getResources().getDisplayMetrics().density;			
+		int pixels = (int) (dps * scale + 0.5f);
+		button.setHeight(pixels);
+		button.setBackgroundColor(Color.LTGRAY);
+		button.setGravity(Gravity.CENTER_VERTICAL);
+		
+		_linearlayout.addView(button);
+		button.setOnClickListener(new View.OnClickListener() {				
+			@Override
+			public void onClick(View v) {
+				//set button's intent, opening detail activity
+				Intent intent = new Intent(context,CameraResultActivity.class);				
+				context.startActivity(intent);
+			}
+		});
+		
 	}
 	
 	@Override
@@ -125,11 +158,13 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	   // execution of result of Long time consuming operation
 		setfields();
 		_imageView.setImageURI(imageUri);
+		_progressDialog.dismiss();
 	  }
 	
-	protected void onProgressUpdate(Integer... progress) {
-		_field_tess.setText("Analysying Image ...");
-		
+	protected void onProgressUpdate(Integer... progress) {		
+		_progressDialog = new ProgressDialog(context);
+		_progressDialog.setMessage("Scanning Image...");
+		_progressDialog.show();
     }
     
 }

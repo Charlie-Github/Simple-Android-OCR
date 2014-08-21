@@ -50,8 +50,7 @@ public class SimpleAndroidOCRActivity extends Activity {
 
 	protected Button _button;
 	// protected ImageView _image;
-	protected EditText _field;
-	protected EditText _field2;
+
 	
 	protected String _path;
 	protected boolean _taken;
@@ -107,9 +106,7 @@ public class SimpleAndroidOCRActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main);		
-		
-		_field = (EditText) findViewById(R.id.field);
-		_field2 = (EditText) findViewById(R.id.filed2);
+
 		_button = (Button) findViewById(R.id.button);//need a downcasting
 		_button.setOnClickListener(new ButtonClickHandler());//event handler
 		
@@ -118,8 +115,7 @@ public class SimpleAndroidOCRActivity extends Activity {
 		Intent intent = getIntent();
 		String foodTitlte = intent.getStringExtra("FOOD_TITLE");
 		String foodName = intent.getStringExtra("FOOD_NAME");
-		_field.setText(foodTitlte);
-		_field2.setText(foodName);
+
 		
 	}
 

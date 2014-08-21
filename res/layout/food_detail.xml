@@ -7,23 +7,36 @@
 
 	<EditText
         android:id="@+id/field5"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/text_hint" />
+        android:hint="@string/text_hint" 
+        android:editable="false"
+        android:textSize="32sp"
+        android:layout_marginStart="10dp"
+        android:background="#00000000"
+        />
 
     <EditText
         android:id="@+id/filed6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" >
+        android:editable="false"
+        android:ems="10"
+        
+        android:textSize="32sp" >
+
      </EditText> 
      
      <EditText
-        android:id="@+id/filed7"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10" >           
-    <requestFocus />
+         android:id="@+id/filed7"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:editable="false"
+         android:ems="10"
+         android:layout_marginStart="10dp"
+         android:background="#00000000"
+         >
+    
     </EditText>    
 
 

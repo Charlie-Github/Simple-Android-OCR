@@ -33,7 +33,7 @@ public class CameraResultActivity extends Activity {
 
 	private static final String TAG = "SimpleOCR";
 
-	protected EditText _field3;
+	
 	protected ImageView _imageView;
 	protected LinearLayout scroll_layout;
 	
@@ -49,13 +49,11 @@ public class CameraResultActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera_result);
-		_field3 = (EditText) findViewById(R.id.field3);
+		
 		_imageView = (ImageView)findViewById(R.id.imagview);		
-		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);
+		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);		
+		_path = DATA_PATH + "/ocr.jpg";	
 		
-		_path = DATA_PATH + "/ocr.jpg";
-		
-		Log.i(TAG,"Path: "+DATA_PATH);
 		startCameraActivity();
 		
 	}
@@ -140,51 +138,11 @@ public class CameraResultActivity extends Activity {
 			}
 	
 			Log.v(TAG, "Tesseract API begin");	
-			String recognizedText = "";
+			String recognizedText = "";			
 			
-			/*
-			// Start Tess			
-			TessHelper tesshelper = new TessHelper(DATA_PATH,lang,bitmap);			
-			String recognizedText = tesshelper.recognize();			
-			//Ends Tess
-			*/
 			
-			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_field3,_imageView,scroll_layout,this);//"this"is context
+			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);//"this"is context
 			 tesshp.execute();
-			
-			
-			//_field3.setText(recognizedText);
-			//_field3.setSelection(_field3.getText().toString().length());
-			
-			// Local search begin				
-			//LocalDbOperator ldboperator = new LocalDbOperator(this);
-			//ldboperator.search(recognizedText);
-			//int fid = ldboperator.searchByName(recognizedText);
-			//String chinese_name = ldboperator.searchById(fid);
-			//Log.i(TAG,"Translate: "+chinese_name);
-			// Local search Ends
-			
-			 /*
-			// Wiki search begin
-			final String searchKey = recognizedText;
-			
-			MyRunnable wikiRunnable = new MyRunnable(searchKey);
-			Thread wikiThread = new Thread(wikiRunnable);
-			wikiThread.start();		
-			
-			try {
-				wikiThread.join();
-			} catch (InterruptedException e) {
-				Log.v(TAG,"wikiThread Join Fail: "+ e.getMessage());
-			}			
-			
-			String wikiresult = "";					
-			wikiresult = wikiRunnable.getResult();
-			// Wiki search ends
-			
-			_field4.setText(wikiresult);
-			_field4.setSelection(0);
-			*/
 	
 		}// readImage Ends
 }

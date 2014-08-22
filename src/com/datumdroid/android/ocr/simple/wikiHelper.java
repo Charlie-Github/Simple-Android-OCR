@@ -18,7 +18,7 @@ public class wikiHelper extends AsyncTask<String, Integer, String> {
 		
 		_field_wiki = _field7;
 		context = ex_context;
-		title = foodTitle;
+		title = foodTitle.replace(" ", "%20");
 		wikiresult = "";
 		
 	}
@@ -50,7 +50,7 @@ public class wikiHelper extends AsyncTask<String, Integer, String> {
 	}
 	@Override
 	protected void onPostExecute(String Text) {
-		_field_wiki.setText(wikiresult);
+		_field_wiki.setText("维基百科： \n" + wikiresult);
 		_field_wiki.setSelection(0);
 	  }
 	

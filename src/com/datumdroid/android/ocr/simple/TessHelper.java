@@ -70,7 +70,9 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		
 		if ( lang.equalsIgnoreCase("eng") ) {
 			//remove dump marks
-			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9,.&-?!@%$*+=/]+", " ");
+			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9&]", " ");
+			recognizedText = recognizedText.replaceAll("   ", " ");
+			recognizedText = recognizedText.replaceAll("  ", " ");
 		}
 		
 		recognizedText = recognizedText.trim();

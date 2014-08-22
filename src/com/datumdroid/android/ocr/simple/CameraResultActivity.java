@@ -3,6 +3,8 @@ package com.datumdroid.android.ocr.simple;
 import java.io.File;
 import java.io.IOException;
 
+import com.datumdroid.android.ocr.simple.SimpleAndroidOCRActivity.ButtonClickHandler;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -35,6 +38,7 @@ public class CameraResultActivity extends Activity {
 
 	
 	protected ImageView _imageView;
+	protected ImageView _backgroudimageView;
 	protected LinearLayout scroll_layout;
 	
 	protected String _path;
@@ -52,10 +56,24 @@ public class CameraResultActivity extends Activity {
 		
 		_imageView = (ImageView)findViewById(R.id.imagview);		
 		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);		
-		_path = DATA_PATH + "/ocr.jpg";	
+		_path = DATA_PATH + "/ocr.jpg";
 		
+		
+		_backgroudimageView = (ImageView)findViewById(R.id.imagbackground);
+		
+		_backgroudimageView.setOnClickListener(new BackgroundClickHandler());
 		startCameraActivity();
 		
+	}
+	
+	public class BackgroundClickHandler implements View.OnClickListener {
+		//button handler class. Handle click event
+		public void onClick(View view) {
+			Log.v(TAG, "Starting CameraResultIntent");
+			//startCameraActivity();//sample
+			Intent intent = new Intent(CameraResultActivity.this, CameraResultActivity.class);
+			startActivity(intent);
+		}
 	}
 
 	protected void startCameraActivity() {
@@ -138,10 +156,9 @@ public class CameraResultActivity extends Activity {
 			}
 	
 			Log.v(TAG, "Tesseract API begin");	
-			String recognizedText = "";			
+					
 			
-			
-			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);//"this"is context
+			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,_backgroudimageView,scroll_layout,progressDialog,this);//"this"is context
 			 tesshp.execute();
 	
 		}// readImage Ends

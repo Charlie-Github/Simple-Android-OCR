@@ -127,6 +127,6 @@ public class SimpleAndroidOCRActivity extends Activity {
 			Intent intent = new Intent(SimpleAndroidOCRActivity.this, CameraResultActivity.class);
 			startActivity(intent);
 		}
-	}	
+	}
 	
 }

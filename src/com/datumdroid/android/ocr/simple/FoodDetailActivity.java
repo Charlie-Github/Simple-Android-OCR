@@ -22,8 +22,12 @@ public class FoodDetailActivity extends Activity {
 		_field6 = (EditText) findViewById(R.id.filed6);
 		_field7 = (EditText) findViewById(R.id.filed7);
 		Intent intent = getIntent();
+		
 		String foodTitlte = intent.getStringExtra("FOOD_TITLE");
 		String foodName = intent.getStringExtra("FOOD_NAME");
+		foodTitlte = foodTitlte.toLowerCase();
+		foodTitlte =  Character.toString(foodTitlte.charAt(0)).toUpperCase()+foodTitlte.substring(1);
+		
 		_field5.setText(foodTitlte);
 		_field6.setText(foodName);
 		

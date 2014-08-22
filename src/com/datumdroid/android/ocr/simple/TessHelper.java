@@ -26,6 +26,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private Bitmap bitmap;	
 	
 	protected ImageView _imageView;
+	protected ImageView _backgroudimageView;
 	protected String image_path;
 	protected Uri imageUri;
 
@@ -37,13 +38,14 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String recognizedText;
 	private String[] keywords;
 	
-	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
+	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView,ImageView ex_backgroudimageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		DATA_PATH = path;
 		image_path = path + "/ocr.jpg";
 		lang = language;
 		bitmap = bit;
 		
 		_imageView = ex_imageView;
+		_backgroudimageView = ex_backgroudimageView;
 		_progressDialog = progressDialog;
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
@@ -105,8 +107,14 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 			String[] key_pair = keywords[i].split("\\|");
 			final String title = key_pair[0];
 			final String name = key_pair[1];
+			
+			
+			String ui_title = title.toLowerCase();
+			ui_title =  Character.toString(ui_title.charAt(0)).toUpperCase()+ui_title.substring(1);
+			
+			
 			Button button = new Button(context);
-			button.setText(title+" \n"+name);
+			button.setText(ui_title+" \n"+name);
 			
 			//set button height
 			int dps = 100;
@@ -161,12 +169,16 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		setfields();
 		_imageView.setImageURI(imageUri);
 		_progressDialog.dismiss();
+		_backgroudimageView.setClickable(false);
 	  }
 	
-	protected void onProgressUpdate(Integer... progress) {		
+	protected void onProgressUpdate(Integer... progress) {
+		_imageView.setImageURI(imageUri);
 		_progressDialog = new ProgressDialog(context);
 		_progressDialog.setMessage("Scanning Image...");
 		_progressDialog.show();
+		_progressDialog.setCanceledOnTouchOutside(false);
+		_backgroudimageView.setClickable(false);
     }
     
 }

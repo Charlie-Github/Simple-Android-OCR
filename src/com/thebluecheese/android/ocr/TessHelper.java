@@ -17,9 +17,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.datumdroid.android.ocr.simple.CameraResultActivity;
-import com.datumdroid.android.ocr.simple.FoodDetailActivity;
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.thebluecheese.android.activity.CameraResultActivity;
+import com.thebluecheese.android.activity.FoodDetailActivity;
 import com.thebluecheese.android.localdb.LocalDbOperator;
 
 public class TessHelper extends AsyncTask<String,Integer,String> {

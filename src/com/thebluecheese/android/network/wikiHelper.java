@@ -30,7 +30,7 @@ public class wikiHelper extends AsyncTask<String, Integer, String> {
 		// Wiki search begin
 		final String searchKey = title;
 		
-		MyRunnable wikiRunnable = new MyRunnable(searchKey);
+		WikiRunner wikiRunnable = new WikiRunner(searchKey);
 		Thread wikiThread = new Thread(wikiRunnable);
 		wikiThread.start();
 		

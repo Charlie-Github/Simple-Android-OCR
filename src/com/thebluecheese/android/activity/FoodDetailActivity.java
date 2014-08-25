@@ -1,7 +1,8 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.activity;
 
 import java.util.Locale;
 
+import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.network.FoodDetailHelper;
 
 import android.app.Activity;

@@ -9,13 +9,13 @@ import java.util.Map;
 
 import android.util.Log;
 
-public class MyRunnable implements Runnable {
+public class WikiRunner implements Runnable {
 	
 	private String searchKey;
 	private volatile String result;
 	
 	
-	public MyRunnable(String inputQuery){
+	public WikiRunner(String inputQuery){
 		searchKey = inputQuery;
 		
 	}

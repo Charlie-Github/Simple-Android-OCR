@@ -1,8 +1,9 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.activity;
 
 import java.io.File;
 import java.io.IOException;
 
+import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.ocr.TessHelper;
 
 import android.app.Activity;
@@ -22,7 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class CameraResultActivity extends Activity {
-	public static final String PACKAGE_NAME = "com.datumdroid.android.ocr.simple";
+	public static final String PACKAGE_NAME = "com.thebluecheese.android.activity";
 	public static final String DATA_PATH = Environment
 			.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";	
 

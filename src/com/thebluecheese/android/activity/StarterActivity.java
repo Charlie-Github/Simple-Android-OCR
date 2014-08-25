@@ -1,4 +1,6 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.activity;
+
+import com.thebluecheese.android.activity.R;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 
-public class SimpleAndroidOCRActivity extends Activity {
+public class StarterActivity extends Activity {
 
 	private static final String TAG = "SimpleOCR";
 	protected Button _button;
@@ -33,7 +35,7 @@ public class SimpleAndroidOCRActivity extends Activity {
 		public void onClick(View view) {
 			Log.v(TAG, "Starting CameraResultIntent");
 			//startCameraActivity();//sample
-			Intent intent = new Intent(SimpleAndroidOCRActivity.this, CameraResultActivity.class);
+			Intent intent = new Intent(StarterActivity.this, CameraResultActivity.class);
 			startActivity(intent);
 		}
 	}

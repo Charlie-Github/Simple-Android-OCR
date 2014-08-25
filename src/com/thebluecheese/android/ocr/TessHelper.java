@@ -180,6 +180,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		_progressDialog.setMessage("Scanning Image...");
 		_progressDialog.show();
 		_progressDialog.setCanceledOnTouchOutside(false);
+		_progressDialog.setCancelable(false);
 		_backgroudimageView.setClickable(false);
     }
     

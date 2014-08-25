@@ -46,11 +46,9 @@ public class CameraResultActivity extends Activity {
 		
 		_imageView = (ImageView)findViewById(R.id.imagview);
 		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);
-		_path = DATA_PATH + "/ocr.jpg";
+		_path = DATA_PATH + "/ocr.jpg";		
 		
-		
-		_backgroudimageView = (ImageView)findViewById(R.id.imagbackground);
-		
+		_backgroudimageView = (ImageView)findViewById(R.id.imagbackground);		
 		_backgroudimageView.setOnClickListener(new BackgroundClickHandler());
 		startCameraActivity();
 		

@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 public class FoodDetailActivity extends Activity {
 	// protected ImageView _image;
 		protected EditText _field5;
 		protected EditText _field6;
 		protected EditText _field7;
+		protected LinearLayout scroll_layout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,7 @@ public class FoodDetailActivity extends Activity {
 		_field5 = (EditText) findViewById(R.id.field5);
 		_field6 = (EditText) findViewById(R.id.filed6);
 		_field7 = (EditText) findViewById(R.id.filed7);
+		scroll_layout = (LinearLayout) findViewById(R.id.food_photo_scroll_linear);
 		Intent intent = getIntent();
 		
 		String foodTitlte = intent.getStringExtra("FOOD_TITLE");
@@ -39,7 +42,7 @@ public class FoodDetailActivity extends Activity {
 		//wikiHelper whelper = new wikiHelper(foodTitlte,_field7,this);
 		//whelper.execute();
 		
-		FoodDetailHelper fhelper = new FoodDetailHelper(foodTitlte,_field7);
+		FoodDetailHelper fhelper = new FoodDetailHelper(foodTitlte,_field7,scroll_layout,this);
 		fhelper.execute();
 	}
 

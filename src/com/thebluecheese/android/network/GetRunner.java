@@ -1,4 +1,4 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.network;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -9,29 +9,28 @@ import java.util.Map;
 
 import android.util.Log;
 
-public class MyRunnable implements Runnable {
-	
-	private String searchKey;
-	private volatile String result;
-	
-	
-	public MyRunnable(String inputQuery){
-		searchKey = inputQuery;
-		
-	}
+public class GetRunner implements Runnable{
 
+	private String serverURL;
+	private String parameters;
+	private String result;
+	
+	public GetRunner(String url, String params){
+		serverURL = url;
+		parameters = params;
+	}
+	
 	@Override
 	public void run() {
-		result = sendGet("http://54.191.253.95/wiki.php","title="+searchKey);	
-		Log.v("SimpleOCR","wiki Runnable: " + result);
+		result = sendGet(serverURL,parameters);
+       
 		
 	}
-	
-	public String getResult() {
-        return result;
-    }
-	
-	public static String sendGet(String url, String param) {
+	public String getResult(){
+		return result;
+	}
+
+	public String sendGet(String url, String param) {
         String result = "";
         BufferedReader in = null;
         try {
@@ -57,10 +56,10 @@ public class MyRunnable implements Runnable {
                     connection.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
-                result += line+"\r\n";
+                result += line;
             }
         } catch (Exception e) {
-           Log.v("simpleOCR","发送GET请求出现异常！" + e);
+           Log.v("SimpleOCR","发送GET请求出现异常！" + e);
         }
         // 使用finally块来关闭输入流
         finally {
@@ -72,6 +71,7 @@ public class MyRunnable implements Runnable {
                 e2.printStackTrace();
             }
         }
+        Log.i("SimpleOCR","GetRunner: " + result);
         return result;
     }
 

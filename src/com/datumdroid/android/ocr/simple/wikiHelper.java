@@ -1,5 +1,7 @@
 package com.datumdroid.android.ocr.simple;
 
+import com.thebluecheese.android.network.MyRunnable;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;

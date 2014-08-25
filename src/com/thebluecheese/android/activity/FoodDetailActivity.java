@@ -7,6 +7,7 @@ import com.thebluecheese.android.network.FoodDetailHelper;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ public class FoodDetailActivity extends Activity {
 		
 		FoodDetailHelper fhelper = new FoodDetailHelper(foodTitlte,_field7,scroll_layout,this);
 		fhelper.execute();
+		
 	}
 
 	@Override

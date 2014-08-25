@@ -64,6 +64,10 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	 }
 	
 	public String recognize(){
+		// image pre processor
+		//ImagePreProcessor ipp = new ImagePreProcessor();
+		//Bitmap tempBit = ipp.GrayscaleToBin(bitmap);
+		
 		TessBaseAPI baseApi = new TessBaseAPI();
 		baseApi.setDebug(true);
 		baseApi.init(DATA_PATH, lang);

@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -50,8 +51,7 @@ public class CameraResultActivity extends Activity {
 		
 		_backgroudimageView = (ImageView)findViewById(R.id.imagbackground);		
 		_backgroudimageView.setOnClickListener(new BackgroundClickHandler());
-		startCameraActivity();
-		
+		startCameraActivity();		
 	}
 	
 	public class BackgroundClickHandler implements View.OnClickListener {
@@ -72,7 +72,6 @@ public class CameraResultActivity extends Activity {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 		startActivityForResult(intent, 0);
-
 	}
 	
 	@Override
@@ -145,8 +144,9 @@ public class CameraResultActivity extends Activity {
 					
 			
 			 TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,_backgroudimageView,scroll_layout,progressDialog,this);//"this"is context
-			 tesshp.execute();
-	
+			 //tesshp.execute();
+			// Execute in parallel
+			 tesshp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		}// readImage Ends
 	
 	

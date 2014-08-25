@@ -18,6 +18,7 @@ public class JsonParser {
 	public Food parseFood(String jsonStr){
 		Food localFood = new Food();
 		if (jsonStr != null) {
+			
             try {
                 JSONObject jsonObj = new JSONObject(jsonStr); 
                 JSONArray foods = jsonObj.getJSONArray("result");                

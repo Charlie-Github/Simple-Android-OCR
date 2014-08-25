@@ -1,4 +1,4 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.localdb;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

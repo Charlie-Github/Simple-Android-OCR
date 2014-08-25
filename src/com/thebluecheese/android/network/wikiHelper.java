@@ -1,25 +1,20 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.network;
 
-import com.thebluecheese.android.network.MyRunnable;
-
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+
 
 public class wikiHelper extends AsyncTask<String, Integer, String> {
 	
-	private EditText _field_wiki;	
-	private Context context;
+	private EditText _field_wiki;
+	
 	private String wikiresult;
 	private String title;
 	
-	public wikiHelper(String foodTitle,EditText _field7,Context ex_context){	
+	public wikiHelper(String foodTitle,EditText _field7){	
 		
-		_field_wiki = _field7;
-		context = ex_context;
+		_field_wiki = _field7;		
 		title = foodTitle.replace(" ", "%20");
 		wikiresult = "";
 		

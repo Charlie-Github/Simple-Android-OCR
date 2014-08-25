@@ -7,8 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.thebluecheese.android.basic.Food;
-import com.thebluecheese.android.network.*;
 
 public class SimpleAndroidOCRActivity extends Activity {
 
@@ -22,21 +20,6 @@ public class SimpleAndroidOCRActivity extends Activity {
 		setContentView(R.layout.main);
 
 		/*Test area below*/
-		GetRunner getR = new GetRunner("http://default-environment-9hfbefpjmu.elasticbeanstalk.com/food", "title=chicken");
-		Thread getThread = new Thread(getR);
-		getThread.start();
-		
-		try {
-			getThread.join();
-		} catch (InterruptedException e) {
-			
-		}	
-		
-		String res = getR.getResult();
-		
-		JsonParser jp = new JsonParser();
-		Food f = jp.parseFood(res);
-		Log.v("SimpleOCR","food: "+ f._photos.get(0)._url);
 		
 		/*Test Ends*/
 		

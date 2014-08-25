@@ -1,4 +1,4 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.other;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

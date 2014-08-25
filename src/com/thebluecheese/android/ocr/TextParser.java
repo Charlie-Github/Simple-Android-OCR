@@ -1,4 +1,4 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.ocr;
 
 public class TextParser {
 	
@@ -6,8 +6,7 @@ public class TextParser {
 	public void Textparser(){
 			
 	}
-	static String[] spliteAll(String input){
-		String output = "";
+	public static String[] spliteAll(String input){		
 		String[] parts = input.split(" ");				
 		return parts;
 	}

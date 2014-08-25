@@ -1,9 +1,10 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.localdb;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
+
+import com.thebluecheese.android.ocr.TextParser;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,7 +15,7 @@ import android.util.Log;
 public class LocalDbOperator {
 	private ExternalDbOpenHelper dbOpenHelper;
 	private SQLiteDatabase database;
-	private TextParser textparser;
+	
 	private HashSet<String> keywordsCombo;
 	
 	public LocalDbOperator(Context context){

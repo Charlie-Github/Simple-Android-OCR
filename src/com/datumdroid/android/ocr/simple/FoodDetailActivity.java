@@ -1,7 +1,10 @@
 package com.datumdroid.android.ocr.simple;
 
+import java.util.Locale;
+
+import com.thebluecheese.android.network.FoodDetailHelper;
+
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,14 +28,18 @@ public class FoodDetailActivity extends Activity {
 		
 		String foodTitlte = intent.getStringExtra("FOOD_TITLE");
 		String foodName = intent.getStringExtra("FOOD_NAME");
-		foodTitlte = foodTitlte.toLowerCase();
-		foodTitlte =  Character.toString(foodTitlte.charAt(0)).toUpperCase()+foodTitlte.substring(1);
+		foodTitlte = foodTitlte.toLowerCase(Locale.ENGLISH);
+		foodTitlte =  Character.toString(foodTitlte.charAt(0)).toUpperCase(Locale.ENGLISH)+foodTitlte.substring(1);
 		
 		_field5.setText(foodTitlte);
 		_field6.setText(foodName);
 		
-		wikiHelper whelper = new wikiHelper(foodTitlte,_field7,this);
-		whelper.execute();
+		//wiki sample
+		//wikiHelper whelper = new wikiHelper(foodTitlte,_field7,this);
+		//whelper.execute();
+		
+		FoodDetailHelper fhelper = new FoodDetailHelper(foodTitlte,_field7);
+		fhelper.execute();
 	}
 
 	@Override
@@ -53,4 +60,5 @@ public class FoodDetailActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
 }

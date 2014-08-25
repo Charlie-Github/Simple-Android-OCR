@@ -3,13 +3,11 @@ package com.datumdroid.android.ocr.simple;
 import java.io.File;
 import java.io.IOException;
 
-import com.datumdroid.android.ocr.simple.SimpleAndroidOCRActivity.ButtonClickHandler;
+import com.thebluecheese.android.ocr.TessHelper;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -19,11 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -33,9 +27,7 @@ public class CameraResultActivity extends Activity {
 			.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";	
 
 	public static final String lang = "eng";
-
 	private static final String TAG = "SimpleOCR";
-
 	
 	protected ImageView _imageView;
 	protected ImageView _backgroudimageView;
@@ -43,19 +35,16 @@ public class CameraResultActivity extends Activity {
 	
 	protected String _path;
 	protected boolean _taken;
-	protected static final String PHOTO_TAKEN = "photo_taken";
-	
+	protected static final String PHOTO_TAKEN = "photo_taken";	
 	private ProgressDialog progressDialog;
 	
-	private SQLiteDatabase database;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera_result);
 		
-		_imageView = (ImageView)findViewById(R.id.imagview);		
-		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);		
+		_imageView = (ImageView)findViewById(R.id.imagview);
+		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);
 		_path = DATA_PATH + "/ocr.jpg";
 		
 		
@@ -94,17 +83,15 @@ public class CameraResultActivity extends Activity {
 
 		if (resultCode == -1) {			
 			//onPhotoTaken();
-			_taken = true;
-			
-			readImage();
-						
+			_taken = true;			
+			readImage();						
 		} else {
 			Log.v(TAG, "User cancelled");
 		}
 	}
 	
-	protected void readImage() {
-	
+		
+	protected void readImage() {	
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 4;
 	
@@ -162,4 +149,6 @@ public class CameraResultActivity extends Activity {
 			 tesshp.execute();
 	
 		}// readImage Ends
+	
+	
 }

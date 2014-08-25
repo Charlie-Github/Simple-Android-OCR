@@ -1,8 +1,8 @@
-package com.datumdroid.android.ocr.simple;
+package com.thebluecheese.android.ocr;
 
 import java.io.File;
+import java.util.Locale;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +14,13 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.datumdroid.android.ocr.simple.CameraResultActivity;
+import com.datumdroid.android.ocr.simple.FoodDetailActivity;
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.thebluecheese.android.localdb.LocalDbOperator;
 
 public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String DATA_PATH;
@@ -45,11 +47,11 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		bitmap = bit;
 		
 		_imageView = ex_imageView;
+		
 		_backgroudimageView = ex_backgroudimageView;
 		_progressDialog = progressDialog;
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
-		
 		
 		File file = new File(image_path);
 		imageUri = Uri.fromFile(file);
@@ -109,8 +111,8 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 			final String name = key_pair[1];
 			
 			
-			String ui_title = title.toLowerCase();
-			ui_title =  Character.toString(ui_title.charAt(0)).toUpperCase()+ui_title.substring(1);
+			String ui_title = title.toLowerCase(Locale.ENGLISH);
+			ui_title =  Character.toString(ui_title.charAt(0)).toUpperCase(Locale.ENGLISH)+ui_title.substring(1);
 			
 			
 			Button button = new Button(context);
@@ -139,7 +141,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 			
 		}
 		
-		// Go back botton
+		// Go back button
 		Button button = new Button(context);
 		button.setText("Take Pictur \nAgain");
 		

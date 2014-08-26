@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         <activity
-            android:name="com.thebluecheese.android.activity.StarterActivity"
+            android:name=".StarterActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" >
             <intent-filter>
@@ -23,12 +23,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.thebluecheese.android.activity.CameraResultActivity"
+            android:name=".CameraResultActivity"
             android:label="@string/title_activity_camera_result" >
         </activity>
         <activity
-            android:name="com.thebluecheese.android.activity.FoodDetailActivity"
+            android:name=".FoodDetailActivity"
             android:label="@string/title_activity_food_detail" >
+        </activity>
+        <activity
+            android:name=".FoodSearchActivity"
+            android:label="@string/title_activity_food_search" >
         </activity>
     </application>
 

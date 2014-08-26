@@ -46,6 +46,26 @@ public class LocalDbOperator {
 		return array;
 	}
 	
+	
+	public String[] blurSearch(String input){	
+		
+		ArrayList<Integer> blurArraylist = this.searchByNamePreBlur(input);
+		ArrayList<String> translated = new ArrayList<String>();
+		
+		for(int i = 0; i < blurArraylist.size(); i++){
+			int fid = 0;
+			if(blurArraylist.get(i) != null){
+				fid = blurArraylist.get(i);
+			}			
+			String chinese_name = this.searchById(fid);
+			String title = this.searchTitleById(fid);
+			if(chinese_name != ""){
+				translated.add(title+"|"+chinese_name);// en_Name|zh_name, pair				
+			}
+		}		
+		String[] array = translated.toArray(new String[translated.size()]);
+		return array;
+	}	
 	public String searchById(int id){
 		// search Chinese name by id
 		// query(table_name,col_names[],where_statement,where_args_)
@@ -55,7 +75,22 @@ public class LocalDbOperator {
 		if(!foodCursor.isAfterLast()) {
             do {
                 name = foodCursor.getString(0);
-                Log.i("LocalDB", "zh_name: "+name);
+                //Log.i("LocalDB", "zh_name: "+name);
+            } while (foodCursor.moveToNext());
+        }
+		foodCursor.close();
+		return name;		
+	}
+	public String searchTitleById(int id){
+		// search Chinese name by id
+		// query(table_name,col_names[],where_statement,where_args_)
+		Cursor foodCursor = database.query("Keyword",new String[]{"title"}, "_id = "+id,null, null, null, null);
+		foodCursor.moveToFirst();
+		String name = "";
+		if(!foodCursor.isAfterLast()) {
+            do {
+                name = foodCursor.getString(0);
+                //Log.i("LocalDB", "en_name: "+name);
             } while (foodCursor.moveToNext());
         }
 		foodCursor.close();
@@ -74,7 +109,7 @@ public class LocalDbOperator {
 			if(!foodCursor.isAfterLast()) {
 	            do {
 	                id = foodCursor.getInt(0);
-	                Log.i("LocalDB", "_id: "+ id);
+	                //Log.i("LocalDB", "_id: "+ id);
 	            } while (foodCursor.moveToNext());
 	        }
 			foodCursor.close();
@@ -82,10 +117,10 @@ public class LocalDbOperator {
 		return id;
 	}
 	
-	public int searchByNamePreBlur(String name){
+	public ArrayList<Integer> searchByNamePreBlur(String name){
 		// search food _id by blur name
 		name = name.toUpperCase(Locale.ENGLISH);
-		
+		ArrayList<Integer> ids = new ArrayList<Integer>();
 		// query(table_name,col_names[],where_statement,where_args_)
 		Cursor foodCursor = database.query("Keyword",new String[]{"_id"}, "upper(title) like \'"+name+"%\'",null, null, null, null);
 		foodCursor.moveToFirst();
@@ -93,11 +128,13 @@ public class LocalDbOperator {
 		if(!foodCursor.isAfterLast()) {
             do {
                 id = foodCursor.getInt(0);
+                ids.add(new Integer(id));
                 Log.i("LocalDB", "blur search: "+ id);
             } while (foodCursor.moveToNext());
         }
-		foodCursor.close();
-		return id;		
+		foodCursor.close();	
+		
+		return ids;		
 	}
 	
 	public void combineKeywords(String[] keywords, int window_size){		
@@ -116,7 +153,7 @@ public class LocalDbOperator {
 				Log.i("LocalDB","tempCombo: "+tempCombination);
 				int tempId = this.searchByName(tempCombination);
 				if(tempId != 0){
-					keywordsCombo.add(tempCombination);	
+					keywordsCombo.add(tempCombination.toLowerCase(Locale.ENGLISH));	
 				}	
 				//pointer = pointer + Math.min(window_current_size, keywords.length-pointer);
 				pointer++;

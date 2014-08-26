@@ -49,7 +49,10 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		_imageView = ex_imageView;
 		
 		_backgroudimageView = ex_backgroudimageView;
+		
 		_progressDialog = progressDialog;
+		
+		
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
 		
@@ -60,7 +63,8 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	
 	 @Override
 	 protected void onPreExecute(){
-		 
+		
+		
 	 }
 	
 	public String recognize(){
@@ -85,8 +89,6 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		
 		recognizedText = recognizedText.trim();
 		Log.v("SimpleOCR", "Tesseract output: " + recognizedText);
-		
-
 		
 		return recognizedText;
 		
@@ -173,18 +175,20 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	protected void onPostExecute(String Text) {
 	   // execution of result of Long time consuming operation
 		setfields();
-		_imageView.setImageURI(imageUri);
 		_progressDialog.dismiss();
+		_imageView.setImageURI(imageUri);
 		_backgroudimageView.setClickable(false);
+		
 	  }
 	
 	protected void onProgressUpdate(Integer... progress) {
-		_imageView.setImageURI(imageUri);
 		_progressDialog = new ProgressDialog(context);
 		_progressDialog.setMessage("Scanning Image...");
 		_progressDialog.show();
-		_progressDialog.setCanceledOnTouchOutside(false);
 		_progressDialog.setCancelable(false);
+		_progressDialog.setCanceledOnTouchOutside(false);
+		
+		_imageView.setImageURI(imageUri);
 		_backgroudimageView.setClickable(false);
     }
     

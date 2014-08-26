@@ -1,0 +1,120 @@
+package com.thebluecheese.android.localdb;
+
+import java.util.Locale;
+
+import com.thebluecheese.android.activity.CameraResultActivity;
+import com.thebluecheese.android.activity.FoodDetailActivity;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+
+public class LocalSearchHelper extends AsyncTask<String, Integer, String> {
+	private Context _context;
+	private LinearLayout _linearlayout;
+	private String[] searchResult;
+	private String input;
+
+	public LocalSearchHelper(String inputSearch,LinearLayout linearlayout,Context context){
+		input = inputSearch;
+		_linearlayout = linearlayout;
+		_context = context;
+	}
+	
+	 @Override
+	 protected void onPreExecute(){
+		
+		
+	 }
+	
+	@Override
+	protected String doInBackground(String... params) {
+		
+		publishProgress(1);//call onProgressUpdate
+		searchFood(input);		
+		return input;
+	}
+	
+	protected void searchFood(String inputText){
+		inputText = inputText.trim();
+		//local search begin
+		if(inputText != ""){
+			LocalDbOperator ldboperator = new LocalDbOperator(_context);
+			searchResult = ldboperator.blurSearch(inputText);
+		}
+	}
+	@Override
+	protected void onPostExecute(String Text) {
+	   // execution of result of Long time consuming operation
+		((LinearLayout) _linearlayout).removeAllViews();
+		setfields();
+	}
+	
+	protected void onProgressUpdate(Integer... progress) {
+		
+		
+		((LinearLayout) _linearlayout).removeAllViews();
+		Button text = new Button(_context);
+		text.setText("搜索中...");
+		
+		//set button height
+		int dps = 100;
+		float scale = _context.getResources().getDisplayMetrics().density;
+		int pixels = (int) (dps * scale + 0.5f);
+		//text.setHeight(pixels);
+		text.setBackgroundColor(Color.TRANSPARENT);
+		text.setGravity(Gravity.CENTER_VERTICAL);
+		
+		_linearlayout.addView(text);
+		
+		
+	}
+	
+	protected void setfields(){
+		
+		for(int i = 0; i<searchResult.length; i++){
+			String[] key_pair = searchResult[i].split("\\|");
+			final String title = key_pair[0];
+			final String name = key_pair[1];			
+			
+			String ui_title = title.toLowerCase(Locale.ENGLISH);
+			ui_title =  Character.toString(ui_title.charAt(0)).toUpperCase(Locale.ENGLISH)+ui_title.substring(1);			
+			
+			Button text = new Button(_context);
+			text.setText(ui_title+" \n"+name);
+			
+			//set button height
+			int dps = 100;
+			float scale = _context.getResources().getDisplayMetrics().density;			
+			int pixels = (int) (dps * scale + 0.5f);
+			//text.setHeight(pixels);
+			text.setBackgroundColor(Color.TRANSPARENT);
+			text.setGravity(Gravity.CENTER_VERTICAL);
+			
+			_linearlayout.addView(text);
+			text.setOnClickListener(new View.OnClickListener() {				
+				@Override
+				public void onClick(View v) {
+					//set button's intent, opening detail activity
+					Intent intent = new Intent(_context,FoodDetailActivity.class);
+					intent.putExtra("FOOD_TITLE", title);
+					intent.putExtra("FOOD_NAME", name);
+					_context.startActivity(intent);
+				}
+			});		
+			
+		}
+		
+		
+		
+	}
+
+
+}

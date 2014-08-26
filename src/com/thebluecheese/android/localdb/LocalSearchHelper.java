@@ -2,10 +2,10 @@ package com.thebluecheese.android.localdb;
 
 import java.util.Locale;
 
-import com.thebluecheese.android.activity.CameraResultActivity;
+
 import com.thebluecheese.android.activity.FoodDetailActivity;
 
-import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,7 +13,7 @@ import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+
 import android.widget.LinearLayout;
 
 public class LocalSearchHelper extends AsyncTask<String, Integer, String> {

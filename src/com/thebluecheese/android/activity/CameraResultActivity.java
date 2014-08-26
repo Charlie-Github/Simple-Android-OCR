@@ -37,6 +37,7 @@ public class CameraResultActivity extends Activity {
 	protected LinearLayout scroll_layout;
 	protected Button _searchBytype;
 	
+	
 	protected String _path;
 	protected boolean _taken;
 	protected static final String PHOTO_TAKEN = "photo_taken";	
@@ -48,21 +49,31 @@ public class CameraResultActivity extends Activity {
 		setContentView(R.layout.camera_result);
 		
 		_imageView = (ImageView)findViewById(R.id.imagview);
+		
 		_searchBytype = (Button)findViewById(R.id.searhByTypeButton);
 		_searchBytype.setOnClickListener(new ButtonClickHandler());
+		
+
+		
 		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);
-		_path = DATA_PATH + "/ocr.jpg";		
+		_path = DATA_PATH + "/ocr.jpg";
 		
 		_backgroudimageView = (ImageView)findViewById(R.id.imagbackground);
-		//_backgroudimageView.setOnClickListener(new BackgroundClickHandler());
-		//startCameraActivity();		
+		_backgroudimageView.setOnClickListener(new BackgroundClickHandler());
+		startCameraActivity();		
+	}
+	
+	
+	public class PhotoClickHandler implements View.OnClickListener {
+		//button handler class. Handle click event
+		public void onClick(View view) {
+			Intent intent = new Intent(CameraResultActivity.this, CameraResultActivity.class);
+			startActivity(intent);
+		}
 	}
 	
 	public class BackgroundClickHandler implements View.OnClickListener {
-		//button handler class. Handle click event
 		public void onClick(View view) {
-			Log.v(TAG, "Starting CameraResultIntent");
-			//startCameraActivity();//sample
 			Intent intent = new Intent(CameraResultActivity.this, CameraResultActivity.class);
 			startActivity(intent);
 		}

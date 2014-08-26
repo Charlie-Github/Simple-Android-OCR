@@ -1,22 +1,16 @@
 package com.thebluecheese.android.network;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
-import com.thebluecheese.android.activity.FoodDetailActivity;
-import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
 
-import android.app.Activity;
+
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
+
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;

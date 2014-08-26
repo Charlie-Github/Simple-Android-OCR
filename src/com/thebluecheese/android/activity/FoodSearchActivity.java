@@ -1,26 +1,17 @@
 package com.thebluecheese.android.activity;
 
-import java.util.Locale;
 
-import com.thebluecheese.android.activity.CameraResultActivity.BackgroundClickHandler;
-import com.thebluecheese.android.localdb.LocalDbOperator;
 import com.thebluecheese.android.localdb.LocalSearchHelper;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Color;
+
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
+
 import android.view.View;
-import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+
 import android.widget.LinearLayout;
 
 public class FoodSearchActivity extends Activity {

@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.thebluecheese.android.activity.CameraResultActivity;
 import com.thebluecheese.android.activity.FoodDetailActivity;
+import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.localdb.LocalDbOperator;
 
 public class TessHelper extends AsyncTask<String,Integer,String> {
@@ -149,7 +150,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		
 		// Go back button
 		Button button = new Button(context);
-		button.setText("Take Pictur \nAgain");
+		button.setText(R.string.takePicAgain);
 		
 		//set button height
 		int dps = 100;
@@ -183,7 +184,8 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	
 	protected void onProgressUpdate(Integer... progress) {
 		_progressDialog = new ProgressDialog(context);
-		_progressDialog.setMessage("Scanning Image...");
+		String loadingmessage = context.getResources().getString(R.string.scanning);
+		_progressDialog.setMessage(loadingmessage);
 		_progressDialog.show();
 		_progressDialog.setCancelable(false);
 		_progressDialog.setCanceledOnTouchOutside(false);

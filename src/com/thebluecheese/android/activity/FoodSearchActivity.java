@@ -2,16 +2,11 @@ package com.thebluecheese.android.activity;
 
 
 import com.thebluecheese.android.localdb.LocalSearchHelper;
-
 import android.app.Activity;
-
 import android.os.Bundle;
-
 import android.view.View;
-
 import android.widget.EditText;
 import android.widget.ImageButton;
-
 import android.widget.LinearLayout;
 
 public class FoodSearchActivity extends Activity {
@@ -31,15 +26,13 @@ public class FoodSearchActivity extends Activity {
 		_searchField = (EditText) findViewById(R.id.searchText);
 		
 		_searchButton.setOnClickListener(new ButtonClickHandler());
-	}
+	}	
 	
 	
-	
-	
-	public class ButtonClickHandler implements View.OnClickListener {
-		
-		public void onClick(View view) {		
-			LocalSearchHelper lsh = new LocalSearchHelper(_searchField.getText().toString(),_linearResult,FoodSearchActivity.this);
+	public class ButtonClickHandler implements View.OnClickListener {		
+		public void onClick(View view) {
+			String inputString = _searchField.getText().toString();
+			LocalSearchHelper lsh = new LocalSearchHelper(inputString,_linearResult,FoodSearchActivity.this);
 			lsh.execute();
 		}
 	}

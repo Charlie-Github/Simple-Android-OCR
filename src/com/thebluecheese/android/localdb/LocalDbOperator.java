@@ -55,11 +55,12 @@ public class LocalDbOperator {
 		for(int i = 0; i < blurArraylist.size(); i++){
 			int fid = 0;
 			if(blurArraylist.get(i) != null){
+				// avoid null value in arraylist
 				fid = blurArraylist.get(i);
 			}			
 			String chinese_name = this.searchById(fid);
 			String title = this.searchTitleById(fid);
-			if(chinese_name != ""){
+			if(!chinese_name.equals("")){
 				translated.add(title+"|"+chinese_name);// en_Name|zh_name, pair				
 			}
 		}		
@@ -119,21 +120,25 @@ public class LocalDbOperator {
 	
 	public ArrayList<Integer> searchByNamePreBlur(String name){
 		// search food _id by blur name
-		name = name.toUpperCase(Locale.ENGLISH);
+		name = name.trim();
+				
+		Log.i("LocalDB", "blur search input1: "+ (!name.equals("")));
 		ArrayList<Integer> ids = new ArrayList<Integer>();
-		// query(table_name,col_names[],where_statement,where_args_)
-		Cursor foodCursor = database.query("Keyword",new String[]{"_id"}, "upper(title) like \'"+name+"%\'",null, null, null, null);
-		foodCursor.moveToFirst();
-		int id = 0;
-		if(!foodCursor.isAfterLast()) {
-            do {
-                id = foodCursor.getInt(0);
-                ids.add(new Integer(id));
-                Log.i("LocalDB", "blur search: "+ id);
-            } while (foodCursor.moveToNext());
-        }
-		foodCursor.close();	
-		
+		if(!name.equals("")){
+			Log.i("LocalDB", "blur search input2: "+ name);
+			name = name.toUpperCase(Locale.ENGLISH);			
+			Cursor foodCursor = database.query("Keyword",new String[]{"_id"}, "upper(title) like \'"+name+"%\'",null, null, null, null);
+			foodCursor.moveToFirst();
+			int id = 0;
+			if(!foodCursor.isAfterLast()) {
+	            do {
+	                id = foodCursor.getInt(0);
+	                ids.add(new Integer(id));
+	                //Log.i("LocalDB", "blur search: "+ id);
+	            } while (foodCursor.moveToNext());
+	        }
+			foodCursor.close();	
+		}
 		return ids;		
 	}
 	

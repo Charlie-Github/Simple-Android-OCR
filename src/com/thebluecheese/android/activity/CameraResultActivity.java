@@ -1,7 +1,10 @@
 package com.thebluecheese.android.activity;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.ocr.TessHelper;
@@ -9,6 +12,7 @@ import com.thebluecheese.android.ocr.TessHelper;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -27,8 +31,8 @@ import android.widget.LinearLayout;
 public class CameraResultActivity extends Activity {
 	public static final String PACKAGE_NAME = "com.thebluecheese.android.activity";
 	public static final String DATA_PATH = Environment
-			.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";	
-
+			.getExternalStorageDirectory().toString() + "/BlueCheese/";
+	
 	public static final String lang = "eng";
 	private static final String TAG = "SimpleOCR";
 	
@@ -45,6 +49,57 @@ public class CameraResultActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		
+		//create file folder
+		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
+		
+			for (String path : paths) {
+				File dir = new File(path);
+				if (!dir.exists()) {
+					if (!dir.mkdirs()) {
+						Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
+						return;
+					} else {
+						Log.v(TAG, "Created directory " + path + " on sdcard");
+					}
+				}
+			
+			}
+			
+			// lang.traineddata file with the app (in assets folder)
+			// You can get them at:
+			// http://code.google.com/p/tesseract-ocr/downloads/list
+			// This area needs work and optimization
+			if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists()) {
+				try {
+			
+					AssetManager assetManager = getAssets();
+					InputStream in = assetManager.open("tessdata/" + lang + ".traineddata");
+					//GZIPInputStream gin = new GZIPInputStream(in);
+					OutputStream out = new FileOutputStream(DATA_PATH
+							+ "tessdata/" + lang + ".traineddata");
+			
+					// Transfer bytes from in to out
+					byte[] buf = new byte[1024];
+					int len;
+					//while ((lenf = gin.read(buff)) > 0) {
+					while ((len = in.read(buf)) > 0) {
+						out.write(buf, 0, len);
+					}
+					in.close();
+					//gin.close();
+					out.close();
+					
+					Log.v(TAG, "Copied " + lang + " traineddata");
+				} catch (IOException e) {
+					Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
+				}
+			}
+		
+		//end of prepare
+		
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera_result);
 		
@@ -56,6 +111,7 @@ public class CameraResultActivity extends Activity {
 
 		
 		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);
+		
 		_path = DATA_PATH + "/ocr.jpg";
 		
 		_backgroudimageView = (ImageView)findViewById(R.id.imagbackground);
@@ -94,6 +150,7 @@ public class CameraResultActivity extends Activity {
 		// http://labs.makemachine.net/2010/03/simple-android-photo-capture/
 		File file = new File(_path);
 		Uri outputFileUri = Uri.fromFile(file);
+		Log.i(TAG,"_path: "+ _path);
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 		startActivityForResult(intent, 0);
@@ -117,7 +174,7 @@ public class CameraResultActivity extends Activity {
 	protected void readImage() {	
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 4;
-	
+			//String fname=new File(getFilesDir(), "/ocr.jpg").getAbsolutePath();
 			Bitmap bitmap = BitmapFactory.decodeFile(_path, options);
 	
 			try {

@@ -7,19 +7,17 @@ import com.thebluecheese.android.network.FoodDetailHelper;
 
 import android.app.Activity;
 import android.content.Intent;
-
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 public class FoodDetailActivity extends Activity {
 	// protected ImageView _image;
-		protected EditText _field5;
-		protected EditText _field6;
-		protected EditText _field7;
-		protected LinearLayout scroll_layout;
+	protected String TAG = "BlueCheese";
+	protected EditText _field5;
+	protected EditText _field6;
+	protected EditText _field7;
+	protected LinearLayout scroll_layout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +31,10 @@ public class FoodDetailActivity extends Activity {
 		
 		String foodTitlte = intent.getStringExtra("FOOD_TITLE");
 		String foodName = intent.getStringExtra("FOOD_NAME");
-		foodTitlte = foodTitlte.toLowerCase(Locale.ENGLISH);
-		foodTitlte =  Character.toString(foodTitlte.charAt(0)).toUpperCase(Locale.ENGLISH)+foodTitlte.substring(1);
+		
+		//convert food title to "Upper lower" format
+		foodTitlte = foodTitlte.toLowerCase(Locale.ENGLISH);		
+		foodTitlte = Character.toString(foodTitlte.charAt(0)).toUpperCase(Locale.ENGLISH)+foodTitlte.substring(1);
 		
 		_field5.setText(foodTitlte);
 		_field6.setText(foodName);

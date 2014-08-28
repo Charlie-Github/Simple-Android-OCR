@@ -40,6 +40,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	
 	private String recognizedText;
 	private String[] keywords;
+	private String TAG = "BlueCheese";
 	
 	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView,ImageView ex_backgroudimageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		DATA_PATH = path;
@@ -63,15 +64,13 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	}	
 	
 	 @Override
-	 protected void onPreExecute(){
-		
-		
+	 protected void onPreExecute(){		
 	 }
 	
 	public String recognize(){
 		// image pre processor
-		//ImagePreProcessor ipp = new ImagePreProcessor();
-		//Bitmap tempBit = ipp.GrayscaleToBin(bitmap);
+		// ImagePreProcessor ipp = new ImagePreProcessor();
+		// Bitmap tempBit = ipp.GrayscaleToBin(bitmap);
 		
 		TessBaseAPI baseApi = new TessBaseAPI();
 		baseApi.setDebug(true);
@@ -89,7 +88,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		}
 		
 		recognizedText = recognizedText.trim();
-		Log.v("SimpleOCR", "Tesseract output: " + recognizedText);
+		Log.v(TAG, "Tesseract output: " + recognizedText);
 		
 		return recognizedText;
 		
@@ -106,10 +105,30 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		keywords = ldboperator.search(recognizedText);
 		
 		//local search ends		
-		
 		return recognizedText;
 	}
 	
+	@Override
+	protected void onPostExecute(String Text) {
+	   // execution of result of Long time consuming operation
+		setfields();
+		_progressDialog.dismiss();
+		_imageView.setImageURI(imageUri);
+		_backgroudimageView.setClickable(false);
+		
+	  }
+	
+	protected void onProgressUpdate(Integer... progress) {
+		_progressDialog = new ProgressDialog(context);
+		String loadingmessage = context.getResources().getString(R.string.scanning);
+		_progressDialog.setMessage(loadingmessage);		
+		_progressDialog.setCancelable(false);
+		_progressDialog.setCanceledOnTouchOutside(false);
+		_progressDialog.show();
+		
+		_imageView.setImageURI(imageUri);
+		_backgroudimageView.setClickable(false);
+    }
 	protected void setfields(){
 		
 		for(int i = 0; i<keywords.length; i++){
@@ -117,7 +136,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 			final String title = key_pair[0];
 			final String name = key_pair[1];
 			
-			
+			// set title format
 			String ui_title = title.toLowerCase(Locale.ENGLISH);
 			ui_title =  Character.toString(ui_title.charAt(0)).toUpperCase(Locale.ENGLISH)+ui_title.substring(1);
 			
@@ -171,27 +190,4 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		});
 		
 	}
-	
-	@Override
-	protected void onPostExecute(String Text) {
-	   // execution of result of Long time consuming operation
-		setfields();
-		_progressDialog.dismiss();
-		_imageView.setImageURI(imageUri);
-		_backgroudimageView.setClickable(false);
-		
-	  }
-	
-	protected void onProgressUpdate(Integer... progress) {
-		_progressDialog = new ProgressDialog(context);
-		String loadingmessage = context.getResources().getString(R.string.scanning);
-		_progressDialog.setMessage(loadingmessage);
-		_progressDialog.show();
-		_progressDialog.setCancelable(false);
-		_progressDialog.setCanceledOnTouchOutside(false);
-		
-		_imageView.setImageURI(imageUri);
-		_backgroudimageView.setClickable(false);
-    }
-    
 }

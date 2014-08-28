@@ -23,11 +23,9 @@ public class FoodSearchActivity extends Activity {
 		
 		_searchButton = (ImageButton)findViewById(R.id.searchButton);
 		_linearResult = (LinearLayout) findViewById(R.id.linear_search_results);
-		_searchField = (EditText) findViewById(R.id.searchText);
-		
+		_searchField = (EditText) findViewById(R.id.searchText);		
 		_searchButton.setOnClickListener(new ButtonClickHandler());
-	}	
-	
+	}
 	
 	public class ButtonClickHandler implements View.OnClickListener {		
 		public void onClick(View view) {
@@ -35,8 +33,5 @@ public class FoodSearchActivity extends Activity {
 			LocalSearchHelper lsh = new LocalSearchHelper(inputString,_linearResult,FoodSearchActivity.this);
 			lsh.execute();
 		}
-	}
-	
-
-	
+	}	
 }

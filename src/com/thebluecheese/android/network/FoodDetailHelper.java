@@ -2,15 +2,17 @@ package com.thebluecheese.android.network;
 
 import java.util.ArrayList;
 
+import com.thebluecheese.android.activity.FoodDetailActivity;
+import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
 
 
-import android.content.Context;
 
+
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,8 +24,9 @@ public class FoodDetailHelper extends AsyncTask<String, Integer, String> {
 	private Context _context;
 	private String foodDetailResult;
 	private String title;
-	
-	
+	private String serverAddress;
+	private String s3Address;
+	private String TAG = "BlueCheese";
 	
 	public FoodDetailHelper(String foodTitle,EditText _field7,LinearLayout linearlayout,Context context){
 		
@@ -32,7 +35,8 @@ public class FoodDetailHelper extends AsyncTask<String, Integer, String> {
 		foodDetailResult = "";
 		_context = context;
 		_linearlayout = linearlayout;
-		
+		serverAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/food";
+		s3Address = "https://s3-us-west-2.amazonaws.com/blue-cheese-deployment/";
 	}
 	
 	@Override
@@ -45,16 +49,17 @@ public class FoodDetailHelper extends AsyncTask<String, Integer, String> {
 		// search begin
 		final String searchKey = title;
 		
-		GetRunner getR = new GetRunner("http://default-environment-9hfbefpjmu.elasticbeanstalk.com/food", "lang=CN&title="+searchKey);
+		GetRunner getR = new GetRunner(serverAddress , "lang=CN&title="+searchKey);
 		Thread getThread = new Thread(getR);
 		getThread.start();
 		
 		publishProgress(1);
 		
 		try {
+			//waiting for get response
 			getThread.join();
 		} catch (InterruptedException e) {
-			Log.e("SimpleOCR", "FoodDetailHelper Exception: "+e.getMessage());			
+			Log.e(TAG, "Exception on FoodDetailHelper GetRunner thread: " + e.getMessage());			
 		}
 		
 		foodDetailResult = getR.getResult();
@@ -72,14 +77,15 @@ public class FoodDetailHelper extends AsyncTask<String, Integer, String> {
 	  }
 	
 	protected void onProgressUpdate(Integer... progress) {
-		_field_foodDetail.setText("搜索中 ...");
+		String loading = _context.getResources().getString(R.string.loading);
+		_field_foodDetail.setText(loading);
    }
 	
 	protected void setImageViews(ArrayList<FoodPhoto> photos){		
 		for(int i = 0; i<photos.size(); i++){
 			String photoKey = photos.get(i)._url;
 			ImageView imageView = new ImageView(_context);					
-			new DownloadImageTask(imageView).execute("https://s3-us-west-2.amazonaws.com/blue-cheese-deployment/"+photoKey);
+			new DownloadImageTask(imageView).execute(s3Address + photoKey);
 			_linearlayout.addView(imageView);
 		}
 		

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 	  ImageView bmImage;
+	  String TAG = "BlueCheese";
 
 	  public DownloadImageTask(ImageView bmImage) {
 	      this.bmImage = bmImage;
@@ -22,7 +23,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 	        InputStream in = new java.net.URL(urldisplay).openStream();
 	        mIcon11 = BitmapFactory.decodeStream(in);
 	      } catch (Exception e) {
-	          Log.e("SimpleOCR","DownloadImage Exception: "+e.getMessage());
+	          Log.e(TAG,"Exception on DownloadImage: "+e.getMessage());
 	          e.printStackTrace();
 	      }
 	      return mIcon11;

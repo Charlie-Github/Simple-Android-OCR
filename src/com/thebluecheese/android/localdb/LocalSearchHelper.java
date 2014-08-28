@@ -91,6 +91,7 @@ public class LocalSearchHelper extends AsyncTask<String, Integer, String> {
 			text.setBackgroundColor(Color.TRANSPARENT);
 			text.setGravity(Gravity.CENTER_VERTICAL);			
 			_linearlayout.addView(text);
+			
 			// call food detail activity
 			text.setOnClickListener(new View.OnClickListener() {				
 				@Override
@@ -103,9 +104,7 @@ public class LocalSearchHelper extends AsyncTask<String, Integer, String> {
 				}
 			});		
 			
-		}
-		
-		
+		}		
 		
 	}
 

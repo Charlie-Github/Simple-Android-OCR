@@ -10,6 +10,7 @@ import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
 
 public class JsonParser {
+	String TAG = "BlueCheese";
 	
 	public JsonParser(){
 		
@@ -49,10 +50,10 @@ public class JsonParser {
                    
                 }
             } catch (JSONException e) {
-                Log.e("SimpleOCR","JsonException: "+e.getMessage());
+                Log.e(TAG,"Exception on Json parser: "+e.getMessage());
             }
         }
-		Log.v("SimpleOCR", "JsonParser: "+ localFood._name);
+		Log.v(TAG, "JsonParser: "+ localFood._name);
 		return localFood;
 	}
 

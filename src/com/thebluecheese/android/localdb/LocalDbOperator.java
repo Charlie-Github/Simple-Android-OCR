@@ -13,6 +13,7 @@ import android.util.Log;
 
 
 public class LocalDbOperator {
+	private String TAG = "BlueCheese";
 	private ExternalDbOpenHelper dbOpenHelper;
 	private SQLiteDatabase database;
 	
@@ -25,11 +26,11 @@ public class LocalDbOperator {
 	}
 	
 	public String[] search(String fromTess){
-		
+		// first main method
 		String[] translates = TextParser.spliteAll(fromTess);
 		
 		this.combineKeywords(translates,3);
-		Log.i("LocalDB", "Combo: "+ keywordsCombo.toString());		
+		Log.i("TAG", "Database Combo: "+ keywordsCombo.toString());		
 		String[] comboArray = keywordsCombo.toArray(new String[keywordsCombo.size()]);
 		
 		ArrayList<String> translated = new ArrayList<String>();
@@ -37,18 +38,16 @@ public class LocalDbOperator {
 			int fid = this.searchByName(comboArray[i]);			
 			String chinese_name = this.searchById(fid);
 			if(chinese_name != ""){
-				translated.add(comboArray[i]+"|"+chinese_name);// en_Name|zh_name, pair
-				Log.i("LocalDB","Translate: "+chinese_name);
+				translated.add(comboArray[i]+"|"+chinese_name); // en_Name|zh_name, pair				
 			}
-		}
-		
+		}		
 		String[] array = translated.toArray(new String[translated.size()]);
 		return array;
 	}
 	
 	
 	public String[] blurSearch(String input){	
-		
+		// second main method
 		ArrayList<Integer> blurArraylist = this.searchByNamePreBlur(input);
 		ArrayList<String> translated = new ArrayList<String>();
 		
@@ -76,7 +75,6 @@ public class LocalDbOperator {
 		if(!foodCursor.isAfterLast()) {
             do {
                 name = foodCursor.getString(0);
-                //Log.i("LocalDB", "zh_name: "+name);
             } while (foodCursor.moveToNext());
         }
 		foodCursor.close();
@@ -91,7 +89,6 @@ public class LocalDbOperator {
 		if(!foodCursor.isAfterLast()) {
             do {
                 name = foodCursor.getString(0);
-                //Log.i("LocalDB", "en_name: "+name);
             } while (foodCursor.moveToNext());
         }
 		foodCursor.close();
@@ -105,12 +102,10 @@ public class LocalDbOperator {
 		if (name!=""){
 			// query(table_name,col_names[],where_statement,where_args_)
 			Cursor foodCursor = database.query("Keyword",new String[]{"_id"}, "upper(title) = \'"+name+"\'",null, null, null, null);
-			foodCursor.moveToFirst();
-			
+			foodCursor.moveToFirst();			
 			if(!foodCursor.isAfterLast()) {
 	            do {
 	                id = foodCursor.getInt(0);
-	                //Log.i("LocalDB", "_id: "+ id);
 	            } while (foodCursor.moveToNext());
 	        }
 			foodCursor.close();
@@ -121,11 +116,8 @@ public class LocalDbOperator {
 	public ArrayList<Integer> searchByNamePreBlur(String name){
 		// search food _id by blur name
 		name = name.trim();
-				
-		Log.i("LocalDB", "blur search input1: "+ (!name.equals("")));
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		if(!name.equals("")){
-			Log.i("LocalDB", "blur search input2: "+ name);
 			name = name.toUpperCase(Locale.ENGLISH);			
 			Cursor foodCursor = database.query("Keyword",new String[]{"_id"}, "upper(title) like \'"+name+"%\'",null, null, null, null);
 			foodCursor.moveToFirst();
@@ -133,8 +125,7 @@ public class LocalDbOperator {
 			if(!foodCursor.isAfterLast()) {
 	            do {
 	                id = foodCursor.getInt(0);
-	                ids.add(new Integer(id));
-	                //Log.i("LocalDB", "blur search: "+ id);
+	                ids.add(new Integer(id));	                
 	            } while (foodCursor.moveToNext());
 	        }
 			foodCursor.close();	
@@ -144,7 +135,6 @@ public class LocalDbOperator {
 	
 	public void combineKeywords(String[] keywords, int window_size){		
 		for(int window_current_size = window_size; window_current_size > 0; window_current_size--){
-			Log.i("LocalDB","window_current_size: "+window_current_size);
 			for(int pointer = 0; pointer < keywords.length; ){
 				String tempCombination = "";
 				int tempComboLength = pointer + Math.min(window_current_size, keywords.length-pointer-1);
@@ -155,7 +145,6 @@ public class LocalDbOperator {
 						tempCombination += keywords[index];
 					}									
 				}
-				Log.i("LocalDB","tempCombo: "+tempCombination);
 				int tempId = this.searchByName(tempCombination);
 				if(tempId != 0){
 					keywordsCombo.add(tempCombination.toLowerCase(Locale.ENGLISH));	

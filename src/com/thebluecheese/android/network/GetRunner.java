@@ -14,6 +14,7 @@ public class GetRunner implements Runnable{
 	private String serverURL;
 	private String parameters;
 	private String result;
+	private String TAG = "BlueCheeseNetwork";
 	
 	public GetRunner(String url, String params){
 		serverURL = url;
@@ -22,9 +23,7 @@ public class GetRunner implements Runnable{
 	
 	@Override
 	public void run() {
-		result = sendGet(serverURL,parameters);
-       
-		
+		result = sendGet(serverURL,parameters);		
 	}
 	public String getResult(){
 		return result;
@@ -49,7 +48,7 @@ public class GetRunner implements Runnable{
             Map<String, List<String>> map = connection.getHeaderFields();
             // 遍历所有的响应头字段
             for (String key : map.keySet()) {
-                System.out.println(key + "--->" + map.get(key));
+                Log.v(TAG,key + "--->" + map.get(key));
             }
             // 定义 BufferedReader输入流来读取URL的响应
             in = new BufferedReader(new InputStreamReader(
@@ -59,7 +58,7 @@ public class GetRunner implements Runnable{
                 result += line;
             }
         } catch (Exception e) {
-           Log.v("SimpleOCR","发送GET请求出现异常！" + e);
+           Log.v(TAG,"发送GET请求出现异常！" + e);
         }
         // 使用finally块来关闭输入流
         finally {
@@ -71,7 +70,7 @@ public class GetRunner implements Runnable{
                 e2.printStackTrace();
             }
         }
-        Log.i("SimpleOCR","GetRunner: " + result);
+        Log.i(TAG,"GetRunner: " + result);
         return result;
     }
 

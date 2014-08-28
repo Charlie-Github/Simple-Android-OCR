@@ -14,12 +14,10 @@ public class Food {
 	public String _lang;
 	
 
-	public Food(){
-	
+	public Food(){	
 		_tags = "";
 		_title = "";
 		_name = "";
-
 		_description = "";
 		_photos = new ArrayList<FoodPhoto>();
 		_lang= "";

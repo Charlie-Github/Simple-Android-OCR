@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.thebluecheese.android.activity.R;
+import com.thebluecheese.android.ocr.ImageResizer;
 import com.thebluecheese.android.ocr.TessHelper;
 
 import android.app.Activity;
@@ -14,10 +15,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.hardware.Camera;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,14 +33,12 @@ public class CameraResultActivity extends Activity {
 	protected String _path = DATA_PATH + "/ocr.jpg"; // image file
 	
 	public static final String lang = "eng";
-	private static final String TAG = "SimpleOCR";
+	private static final String TAG = "BlueCheese";
 	
 	protected ImageView _imageView;
 	protected ImageView _backgroudimageView;
 	protected LinearLayout scroll_layout;
-	protected Button _searchBytype;
-	
-	
+	protected Button _searchBytype;	
 	
 	protected boolean _taken;
 	protected static final String PHOTO_TAKEN = "photo_taken";	
@@ -151,69 +146,21 @@ public class CameraResultActivity extends Activity {
 
 		if (resultCode == -1) {			
 			_taken = true;
-			readImage();					
+			readImage();
 		} else {
-			Log.v(TAG, "User cancelled");
+			Log.v(TAG, "User cancelled picture");
 		}
-	}
-	
+	}	
 		
-	protected void readImage() {	
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inSampleSize = 4;			
-			Bitmap bitmap = BitmapFactory.decodeFile(_path, options);
-	
-			try {
-				ExifInterface exif = new ExifInterface(_path);
-				int exifOrientation = exif.getAttributeInt(
-						ExifInterface.TAG_ORIENTATION,
-						ExifInterface.ORIENTATION_NORMAL);
-				
-				Log.v(TAG, "Image Orient: " + exifOrientation);	
-				int rotate = 0;
-	
-				switch (exifOrientation) {
-				case ExifInterface.ORIENTATION_ROTATE_90:
-					rotate = 90;
-					break;
-				case ExifInterface.ORIENTATION_ROTATE_180:
-					rotate = 180;
-					break;
-				case ExifInterface.ORIENTATION_ROTATE_270:
-					rotate = 270;
-					break;
-			}
-	
-				Log.v(TAG, "Image Rotation: " + rotate);
-	
-				if (rotate != 0) {	
-					// Getting width & height of the given image.
-					int w = bitmap.getWidth();
-					int h = bitmap.getHeight();
-	
-					// Setting pre rotate
-					Matrix mtx = new Matrix();
-					mtx.preRotate(rotate);
-	
-					// Rotating Bitmap
-					bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-				}
-	
-				// Convert to ARGB_8888, required by tess
-				bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-	
-			} catch (IOException e) {
-				Log.e(TAG, "Correct orientation failed: " + e.toString());
-			}
-	
-			Log.v(TAG, "Tesseract API begin");	
-					
-			
-			TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,_backgroudimageView,scroll_layout,progressDialog,this);//"this"is context
-			//tesshp.execute();
-			// Execute in parallel
-			tesshp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		}// readImage Ends
+	protected void readImage() {
+		Bitmap bitmap = ImageResizer.rotate(_path);
+		
+		Log.v(TAG, "Tesseract API begin");
+		TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,_backgroudimageView,scroll_layout,progressDialog,this);
+		//tesshp.execute();
+		// Execute in parallel
+		tesshp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+	}// readImage Ends
 	
 	
 }

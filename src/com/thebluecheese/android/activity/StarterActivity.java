@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class StarterActivity extends Activity {
 
-	private static final String TAG = "SimpleOCR";
+	private static final String TAG = "BlueCheese";
 	protected Button _button;
 
 
@@ -20,21 +20,16 @@ public class StarterActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
-		/*Test area below*/
+		/*=====================Test area below===========================*/
 		
-		/*Test Ends*/
-		
-		
+		/*=======================Test Ends================================*/		
 		_button = (Button) findViewById(R.id.button);
 		_button.setOnClickListener(new ButtonClickHandler());
 	}
 
-	public class ButtonClickHandler implements View.OnClickListener {
-		//button handler class. Handle click event
+	public class ButtonClickHandler implements View.OnClickListener {		
 		public void onClick(View view) {
-			Log.v(TAG, "Starting CameraResultIntent");
-			//startCameraActivity();//sample
+			Log.v(TAG, "Starting Camera Result Intent");
 			Intent intent = new Intent(StarterActivity.this, CameraResultActivity.class);
 			startActivity(intent);
 		}

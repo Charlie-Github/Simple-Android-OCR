@@ -7,10 +7,10 @@ import android.widget.EditText;
 
 public class wikiHelper extends AsyncTask<String, Integer, String> {
 	
-	private EditText _field_wiki;
-	
+	private EditText _field_wiki;	
 	private String wikiresult;
 	private String title;
+	private String TAG = "BlueCheese";
 	
 	public wikiHelper(String foodTitle,EditText _field7){	
 		
@@ -39,7 +39,7 @@ public class wikiHelper extends AsyncTask<String, Integer, String> {
 		try {
 			wikiThread.join();
 		} catch (InterruptedException e) {
-			Log.v("SimpleOCR","wikiThread Join Fail: "+ e.getMessage());
+			Log.v(TAG,"wikiThread Join Fail: "+ e.getMessage());
 		}				
 							
 		wikiresult = wikiRunnable.getResult();

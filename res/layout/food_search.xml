@@ -23,13 +23,13 @@
         android:hint="@string/search_hint" />
 
     <ImageButton
-		android:id="@+id/searchButton"
-		android:layout_width="wrap_content"
+        android:id="@+id/searchButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        
         android:layout_alignBottom="@+id/searchText"
-		android:layout_marginStart="250dp"
-		android:src="@android:drawable/ic_menu_search" />
+        android:layout_marginStart="250dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_action_search_icon" />
 
     <ScrollView
         android:layout_width="fill_parent"

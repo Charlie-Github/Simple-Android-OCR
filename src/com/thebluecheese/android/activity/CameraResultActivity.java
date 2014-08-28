@@ -38,6 +38,7 @@ public class CameraResultActivity extends Activity {
 	protected ImageView _imageView;
 	protected ImageView _backgroudimageView;
 	protected LinearLayout scroll_layout;
+	protected Button _searchByPhoto;
 	protected Button _searchBytype;	
 	
 	protected boolean _taken;
@@ -55,9 +56,12 @@ public class CameraResultActivity extends Activity {
 		_imageView = (ImageView)findViewById(R.id.imagview);	
 		_searchBytype = (Button)findViewById(R.id.searhByTypeButton);
 		_searchBytype.setOnClickListener(new ButtonClickHandler());
+		_searchByPhoto = (Button)findViewById(R.id.searhByPhoto);
+		_searchByPhoto.setOnClickListener(new PhotoClickHandler());
+		
 		scroll_layout = (LinearLayout) findViewById(R.id.camera_result_scroll_linear);		
 		_backgroudimageView = (ImageView)findViewById(R.id.imagbackground);
-		_backgroudimageView.setOnClickListener(new BackgroundClickHandler());
+		//_backgroudimageView.setOnClickListener(new BackgroundClickHandler());
 		
 		startCameraActivity();
 	}

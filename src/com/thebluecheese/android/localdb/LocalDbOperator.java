@@ -42,6 +42,7 @@ public class LocalDbOperator {
 			}
 		}		
 		String[] array = translated.toArray(new String[translated.size()]);
+		database.close();
 		return array;
 	}
 	
@@ -64,6 +65,7 @@ public class LocalDbOperator {
 			}
 		}		
 		String[] array = translated.toArray(new String[translated.size()]);
+		database.close();
 		return array;
 	}	
 	public String searchById(int id){
@@ -77,7 +79,7 @@ public class LocalDbOperator {
                 name = foodCursor.getString(0);
             } while (foodCursor.moveToNext());
         }
-		foodCursor.close();
+		foodCursor.close();		
 		return name;		
 	}
 	public String searchTitleById(int id){

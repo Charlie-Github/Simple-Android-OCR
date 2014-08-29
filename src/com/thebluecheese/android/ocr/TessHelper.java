@@ -30,8 +30,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	
 	protected ImageView _imageView;
 	protected ImageView _backgroudimageView;
-	protected String image_path;
-	protected Uri imageUri;
+
 
 	private LinearLayout _linearlayout;
 	private Context context;
@@ -43,8 +42,9 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String TAG = "BlueCheese";
 	
 	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView,ImageView ex_backgroudimageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
+		
 		DATA_PATH = path;
-		image_path = path + "/ocr.jpg";
+		
 		lang = language;
 		bitmap = bit;
 		
@@ -57,9 +57,6 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
-		
-		File file = new File(image_path);
-		imageUri = Uri.fromFile(file);
 
 	}	
 	
@@ -98,6 +95,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	protected String doInBackground(String... params) {
 		
 		publishProgress(1);//call onProgressUpdate
+		_imageView.setImageBitmap(bitmap);
 		recognizedText = recognize();
 		
 		//local search begin
@@ -113,7 +111,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	   // execution of result of Long time consuming operation
 		setfields();
 		_progressDialog.dismiss();
-		_imageView.setImageURI(imageUri);
+		//_imageView.setImageURI(imageUri);
 		_backgroudimageView.setClickable(false);
 		
 	  }
@@ -126,7 +124,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		_progressDialog.setCanceledOnTouchOutside(false);
 		_progressDialog.show();
 		
-		_imageView.setImageURI(imageUri);
+		//_imageView.setImageURI(imageUri);
 		_backgroudimageView.setClickable(false);
     }
 	protected void setfields(){

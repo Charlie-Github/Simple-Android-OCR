@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.ocr.ImageResizer;
 import com.thebluecheese.android.ocr.TessHelper;
@@ -44,6 +48,34 @@ public class CameraResultActivity extends Activity {
 	protected boolean _taken;
 	protected static final String PHOTO_TAKEN = "photo_taken";	
 	private ProgressDialog progressDialog;
+	
+	
+	private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i(TAG, "OpenCV loaded successfully");
+                   
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
+    
+    public CameraResultActivity() {
+        Log.i(TAG, "Instantiated new " + this.getClass());
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
+    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

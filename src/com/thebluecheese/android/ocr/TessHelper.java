@@ -1,5 +1,6 @@
 package com.thebluecheese.android.ocr;
 
+
 import java.io.File;
 import java.util.Locale;
 
@@ -16,6 +17,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import org.opencv.android.Utils;
+import org.opencv.core.CvException;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.thebluecheese.android.activity.CameraResultActivity;
@@ -96,6 +104,13 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		
 		publishProgress(1);//call onProgressUpdate
 		_imageView.setImageBitmap(bitmap);
+		
+		// test start		
+		ImagePreProcessor ipp = new ImagePreProcessor();
+		bitmap = ipp.process(bitmap);
+		// test ends		
+		
+		
 		recognizedText = recognize();
 		
 		//local search begin
@@ -110,13 +125,15 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	protected void onPostExecute(String Text) {
 	   // execution of result of Long time consuming operation
 		setfields();
+		_imageView.setImageBitmap(bitmap);
 		_progressDialog.dismiss();
 		//_imageView.setImageURI(imageUri);
 		_backgroudimageView.setClickable(false);
 		
 	  }
 	
-	protected void onProgressUpdate(Integer... progress) {
+	protected void onProgressUpdate(Integer... progress) {		
+		
 		_progressDialog = new ProgressDialog(context);
 		String loadingmessage = context.getResources().getString(R.string.scanning);
 		_progressDialog.setMessage(loadingmessage);		

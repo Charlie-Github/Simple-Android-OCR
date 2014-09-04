@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
 
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.ocr.ImageResizer;
@@ -50,22 +47,6 @@ public class CameraResultActivity extends Activity {
 	private ProgressDialog progressDialog;
 	
 	
-	private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    Log.i(TAG, "OpenCV loaded successfully");
-                   
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
-            }
-        }
-    };
     
     public CameraResultActivity() {
         Log.i(TAG, "Instantiated new " + this.getClass());
@@ -73,8 +54,7 @@ public class CameraResultActivity extends Activity {
     @Override
     public void onResume()
     {
-        super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
+        super.onResume();      
     }
 	
 	@Override
@@ -104,6 +84,7 @@ public class CameraResultActivity extends Activity {
 			Log.v(TAG, "Starting Camera Result Activity");
 			Intent intent = new Intent(CameraResultActivity.this, CameraResultActivity.class);
 			startActivity(intent);
+			
 		}
 	}
 	
@@ -170,8 +151,10 @@ public class CameraResultActivity extends Activity {
 		Uri outputFileUri = Uri.fromFile(file);
 		Log.i(TAG,"OCR image path: "+ _path);
 		// create camera intent
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+		//final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
+		//intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+		
+		final Intent intent = new Intent(this, CameraActivity.class);
 		startActivityForResult(intent, 0);
 	}
 	
@@ -192,7 +175,7 @@ public class CameraResultActivity extends Activity {
 		Bitmap bitmap = ImageResizer.rotate(_path);
 		
 		Log.v(TAG, "Tesseract API begin");
-		TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,_backgroudimageView,scroll_layout,progressDialog,this);
+		TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);
 		//tesshp.execute();
 		// Execute in parallel
 		tesshp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

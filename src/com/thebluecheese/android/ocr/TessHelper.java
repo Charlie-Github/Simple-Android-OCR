@@ -18,12 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvException;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
+
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.thebluecheese.android.activity.CameraResultActivity;
@@ -49,7 +44,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String[] keywords;
 	private String TAG = "BlueCheese";
 	
-	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView,ImageView ex_backgroudimageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
+	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		
 		DATA_PATH = path;
 		
@@ -58,7 +53,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		
 		_imageView = ex_imageView;
 		
-		_backgroudimageView = ex_backgroudimageView;
+		
 		
 		_progressDialog = progressDialog;
 		
@@ -106,8 +101,8 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		_imageView.setImageBitmap(bitmap);
 		
 		// test start		
-		ImagePreProcessor ipp = new ImagePreProcessor();
-		bitmap = ipp.process(bitmap);
+//		ImagePreProcessor ipp = new ImagePreProcessor();
+//		bitmap = ipp.process(bitmap);
 		// test ends		
 		
 		
@@ -128,7 +123,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		_imageView.setImageBitmap(bitmap);
 		_progressDialog.dismiss();
 		//_imageView.setImageURI(imageUri);
-		_backgroudimageView.setClickable(false);
+		//_backgroudimageView.setClickable(false);
 		
 	  }
 	
@@ -142,7 +137,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		_progressDialog.show();
 		
 		//_imageView.setImageURI(imageUri);
-		_backgroudimageView.setClickable(false);
+		//_backgroudimageView.setClickable(false);
     }
 	protected void setfields(){
 		

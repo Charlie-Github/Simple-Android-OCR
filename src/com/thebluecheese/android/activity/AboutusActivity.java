@@ -1,16 +1,35 @@
 package com.thebluecheese.android.activity;
 
+import com.thebluecheese.android.activity.CameraResultActivity.PhotoClickHandler;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class AboutusActivity extends Activity {
+	protected Button _testbutton;
+	String TAG = "TAG";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.aboutus);
+		_testbutton = (Button)findViewById(R.id.testbutton);
+		_testbutton.setOnClickListener(new ButtonClickHandler());
+	}
+	
+	public class ButtonClickHandler implements View.OnClickListener {
+		public void onClick(View view) {
+			// return back to this activity
+			Log.v(TAG, "Starting Camera Result Activity");
+			Intent intent = new Intent(AboutusActivity.this, AboutusActivity.class);
+			startActivity(intent);
+		}
 	}
 
 	@Override

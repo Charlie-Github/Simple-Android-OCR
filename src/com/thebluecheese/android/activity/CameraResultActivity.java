@@ -31,7 +31,7 @@ public class CameraResultActivity extends Activity {
 	public static final String PACKAGE_NAME = "com.thebluecheese.android.activity";
 	public static final String DATA_PATH = Environment
 			.getExternalStorageDirectory().toString() + "/BlueCheese/";
-	protected String _path = DATA_PATH + "/ocr.jpg"; // image file
+	protected String _path = DATA_PATH + "/ocr_crop.jpg"; // image file
 	
 	public static final String lang = "eng";
 	private static final String TAG = "BlueCheese";
@@ -145,14 +145,6 @@ public class CameraResultActivity extends Activity {
 	}
 
 	protected void startCameraActivity() {
-		// Simple android photo capture:
-		// http://labs.makemachine.net/2010/03/simple-android-photo-capture/
-		File file = new File(_path);
-		Uri outputFileUri = Uri.fromFile(file);
-		Log.i(TAG,"OCR image path: "+ _path);
-		// create camera intent
-		//final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);		
-		//intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 		
 		final Intent intent = new Intent(this, CameraActivity.class);
 		startActivityForResult(intent, 0);

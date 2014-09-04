@@ -15,7 +15,8 @@
         android:id="@+id/imagview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-       />
+        android:scaleType="centerCrop"
+		/>
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView1"

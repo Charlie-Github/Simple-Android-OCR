@@ -8,7 +8,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -17,6 +20,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+
 
 
 
@@ -30,7 +35,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String DATA_PATH;
 	private String lang;
 	private Bitmap bitmap;	
-	
+	private Bitmap original_bitmap;
 	protected ImageView _imageView;
 	protected ImageView _backgroudimageView;
 
@@ -43,23 +48,26 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	private String recognizedText;
 	private String[] keywords;
 	private String TAG = "BlueCheese";
+	private String uncropPath;
 	
 	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		
 		DATA_PATH = path;
+		uncropPath = path+"ocr.jpg";
 		
 		lang = language;
 		bitmap = bit;
 		
-		_imageView = ex_imageView;
-		
-		
-		
+		_imageView = ex_imageView;		
 		_progressDialog = progressDialog;
 		
 		
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
+		
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inSampleSize = 4;			
+		original_bitmap = BitmapFactory.decodeFile(uncropPath, options);
 
 	}	
 	
@@ -98,7 +106,8 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	protected String doInBackground(String... params) {
 		
 		publishProgress(1);//call onProgressUpdate
-		_imageView.setImageBitmap(bitmap);
+
+		_imageView.setImageBitmap(original_bitmap);
 		
 		// test start		
 //		ImagePreProcessor ipp = new ImagePreProcessor();
@@ -119,8 +128,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 	@Override
 	protected void onPostExecute(String Text) {
 	   // execution of result of Long time consuming operation
-		setfields();
-		_imageView.setImageBitmap(bitmap);
+		setfields();		
 		_progressDialog.dismiss();
 		//_imageView.setImageURI(imageUri);
 		//_backgroudimageView.setClickable(false);
@@ -139,6 +147,8 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		//_imageView.setImageURI(imageUri);
 		//_backgroudimageView.setClickable(false);
     }
+	
+	
 	protected void setfields(){
 		
 		for(int i = 0; i<keywords.length; i++){

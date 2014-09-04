@@ -12,7 +12,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
@@ -24,11 +28,12 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.thebluecheese.android.ocr.CameraPreview;
-import com.thebluecheese.android.ocr.TessHelper;
+
 
 public class CameraActivity extends Activity {
 
@@ -38,6 +43,7 @@ public class CameraActivity extends Activity {
     private Bitmap mbitmap;
 	protected ImageView _imageView;
 	protected ImageView _backgroudimageView;
+	protected ImageButton captureButton;
 	protected LinearLayout scroll_layout;
 	private ProgressDialog progressDialog;
     
@@ -55,12 +61,13 @@ public class CameraActivity extends Activity {
                 
         // Add a listener to the Capture button
 		
-        Button captureButton = (Button) findViewById(R.id.button_capture);
+        captureButton = (ImageButton) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(new PhotoTakenHandler());
     }
     
     public class PhotoTakenHandler implements View.OnClickListener {
 		public void onClick(View view) {
+			
 			// return back to this activity
 			Log.v(TAG, "Starting Camera Preview");
 			 mCamera.takePicture(new Camera.ShutterCallback() { @Override public void onShutter(){}}, 
@@ -122,7 +129,7 @@ public class CameraActivity extends Activity {
 		// set the focus mode
 		params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 		// set zoom
-		params.setZoom(25);
+		params.setZoom(10);
 		// set Camera parameters
 		mCamera.setParameters(params);
 	}	
@@ -134,14 +141,14 @@ public class CameraActivity extends Activity {
 	    	mbitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 	    	// rotate picture
 	    	mbitmap = rotateBitmap(mbitmap,90);
-	    	// crop
-	    	mbitmap = cropBitmap(mbitmap);	    	
+	    	
+	    	mbitmap = drawRect(mbitmap);
+	    	
 	    	// create file
-	        File pictureFile = getOutputMediaFile();
-	        if (pictureFile == null){
-	            Log.d(TAG, "Error creating media file, check storage permissions" );
-	            return;
-	        }	        
+	        File pictureFile = new File(DATA_PATH+ File.separator +"ocr.jpg");
+	        File corppedFile = new File(DATA_PATH+ File.separator +"ocr_crop.jpg");
+
+	        //original
 	        try {
 	            FileOutputStream fos = new FileOutputStream(pictureFile);
 	            Log.v("test", "file: "+ pictureFile.getAbsolutePath().toString() );
@@ -152,21 +159,58 @@ public class CameraActivity extends Activity {
 	            Log.d(TAG, "File not found: " + e.getMessage());
 	        } catch (IOException e) {
 	            Log.d(TAG, "Error accessing file: " + e.getMessage());
+	        }	        
+	        
+	        // crop
+	    	mbitmap = cropBitmap(mbitmap);	
+	        try {
+	            FileOutputStream fos = new FileOutputStream(corppedFile);
+	            Log.v("test", "file: "+ corppedFile.getAbsolutePath().toString() );
+	            // write bitmap to file //fos.write(data);
+	            mbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);	            
+	            fos.close();
+	        } catch (FileNotFoundException e) {
+	            Log.d(TAG, "File not found: " + e.getMessage());
+	        } catch (IOException e) {
+	            Log.d(TAG, "Error accessing file: " + e.getMessage());
 	        }
 	        
-	        //tesserract read image
-	        //readImage(mbitmap);
-	        
-	        //going back to result view
-//	        Intent intent = new Intent(CameraActivity.this, CameraResultActivity.class);
-//			startActivity(intent);
 	        Intent returnIntent = new Intent();
 	        setResult(RESULT_OK, returnIntent);
 	        finish();
 	        
 	    }
-	};	
+	};
 	
+	public Bitmap drawRect(Bitmap bitmap){
+		// drwa rectangle on bitmap
+    	
+    	Canvas tempCanvas = new Canvas(bitmap);
+    	
+    	Paint paint = new Paint();
+    	//#33b5e5
+    	paint.setColor(Color.rgb(0,0,0));
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setStrokeWidth(20);        
+        paint.setAlpha(100);
+        
+		int top = bitmap.getHeight()*1/5;
+		int right = bitmap.getWidth();
+		int bottom= bitmap.getHeight()*2/5;
+		int height = bitmap.getHeight();        
+    	tempCanvas.drawRect(0,0,right,top, paint);
+    	tempCanvas.drawRect(0,bottom,right,height, paint);
+    	
+    	//#33b5e5
+    	paint.setColor(Color.rgb(51,181,229));    	
+    	paint.setStrokeWidth(200);
+    	tempCanvas.drawLine(100, top+20, 100, bottom-20, paint);
+    	tempCanvas.drawLine(right-100, top+20, right-100, bottom-20, paint);
+    	
+    	tempCanvas.drawBitmap(bitmap, 0, 0, null);
+    	
+    	return bitmap;
+	}
 	
 	public Bitmap cropBitmap(Bitmap bitmap){
 		Bitmap resizedbitmap;		
@@ -181,10 +225,9 @@ public class CameraActivity extends Activity {
 	private static File getOutputMediaFile(){
 	    // Create a media file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    File mediaFile;	   
+	    File mediaFile = new File(DATA_PATH+ File.separator +"OCR.jpg");	   
         //mediaFile = new File(mediaStorageDir.getPath() + File.separator +"IMG_"+ timeStamp + ".jpg");
-    	//mediaFile = new File(DATA_PATH+ File.separator +"IMG_"+ timeStamp + ".jpg");
-	    mediaFile = new File(DATA_PATH+ File.separator +"OCR.jpg");
+    	//mediaFile = new File(DATA_PATH+ File.separator +"IMG_"+ timeStamp + ".jpg");	  
 	    return mediaFile;
 	}	
 	private Bitmap rotateBitmap(Bitmap bitmap,int degree){

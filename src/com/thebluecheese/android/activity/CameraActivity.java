@@ -121,7 +121,7 @@ public class CameraActivity extends Activity {
 		// set hdr
 		List<String> sceneModes = params.getSupportedSceneModes();
 		if (sceneModes.contains(Camera.Parameters.SCENE_MODE_HDR)) {
-			params.setSceneMode(Camera.Parameters.SCENE_MODE_HDR);
+			//params.setSceneMode(Camera.Parameters.SCENE_MODE_HDR);
 		}		
 		// set zoom
 		int zoom = 10;

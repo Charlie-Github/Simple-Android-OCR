@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 
+
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.ocr.ImageResizer;
-import com.thebluecheese.android.ocr.TessHelper;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -167,7 +167,7 @@ public class CameraResultActivity extends Activity {
 		Bitmap bitmap = ImageResizer.rotate(_path);
 		
 		Log.v(TAG, "Tesseract API begin");
-		TessHelper tesshp = new TessHelper(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);
+		CameraActivityAsyncTask tesshp = new CameraActivityAsyncTask(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);
 		//tesshp.execute();
 		// Execute in parallel
 		tesshp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

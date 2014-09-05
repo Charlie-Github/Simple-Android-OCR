@@ -32,8 +32,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.thebluecheese.android.ocr.CameraPreview;
-
 
 public class CameraActivity extends Activity {
 

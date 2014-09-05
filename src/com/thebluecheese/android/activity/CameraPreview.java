@@ -1,4 +1,4 @@
-package com.thebluecheese.android.ocr;
+package com.thebluecheese.android.activity;
 
 import java.io.IOException;
 

@@ -1,7 +1,5 @@
-package com.thebluecheese.android.ocr;
+package com.thebluecheese.android.activity;
 
-
-import java.io.File;
 import java.util.Locale;
 
 import android.app.ProgressDialog;
@@ -9,10 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,52 +16,39 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-
-
-
-
 import com.googlecode.tesseract.android.TessBaseAPI;
-import com.thebluecheese.android.activity.CameraResultActivity;
-import com.thebluecheese.android.activity.FoodDetailActivity;
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.localdb.LocalDbOperator;
 
-public class TessHelper extends AsyncTask<String,Integer,String> {
-	private String DATA_PATH;
-	private String lang;
-	private Bitmap bitmap;	
-	private Bitmap original_bitmap;
+public class CameraActivityAsyncTask extends AsyncTask<String,Integer,String> {
+	protected String DATA_PATH;
+	protected String uncropPath;
+	protected String lang;
+	protected Bitmap bitmap;	
+	protected Bitmap original_bitmap;
 	protected ImageView _imageView;
 	protected ImageView _backgroudimageView;
+	protected LinearLayout _linearlayout;
+	protected Context context;
+	protected ProgressDialog _progressDialog;	
+	
+	protected String recognizedText;
+	protected String[] keywords;
+	protected String TAG = "BlueCheese";
 
-
-	private LinearLayout _linearlayout;
-	private Context context;
 	
-	protected ProgressDialog _progressDialog;
-	
-	private String recognizedText;
-	private String[] keywords;
-	private String TAG = "BlueCheese";
-	private String uncropPath;
-	
-	public TessHelper(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
+	public CameraActivityAsyncTask(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		
 		DATA_PATH = path;
-		uncropPath = path+"ocr.jpg";
-		
-		lang = language;
-		bitmap = bit;
-		
+		uncropPath = path+"ocr.jpg";	
+		lang = language;		
 		_imageView = ex_imageView;		
-		_progressDialog = progressDialog;
-		
-		
+		_progressDialog = progressDialog;		
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
-		
+		bitmap = bit;
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 4;			
+		options.inSampleSize = 4;
 		original_bitmap = BitmapFactory.decodeFile(uncropPath, options);
 
 	}	
@@ -84,8 +66,7 @@ public class TessHelper extends AsyncTask<String,Integer,String> {
 		baseApi.setDebug(true);
 		baseApi.init(DATA_PATH, lang);
 		baseApi.setImage(bitmap);		
-		String recognizedText = baseApi.getUTF8Text();
-		
+		String recognizedText = baseApi.getUTF8Text();		
 		baseApi.end();
 		
 		if ( lang.equalsIgnoreCase("eng") ) {

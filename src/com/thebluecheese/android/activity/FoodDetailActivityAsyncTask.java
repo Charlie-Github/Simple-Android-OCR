@@ -1,14 +1,17 @@
-package com.thebluecheese.android.network;
+package com.thebluecheese.android.activity;
 
 import java.util.ArrayList;
 
-import com.thebluecheese.android.activity.FoodDetailActivity;
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
 
 
 
+
+import com.thebluecheese.android.network.DownloadImageTask;
+import com.thebluecheese.android.network.GetRunner;
+import com.thebluecheese.android.network.JsonParser;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -17,7 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class FoodDetailHelper extends AsyncTask<String, Integer, String> {
+public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	
 	private EditText _field_foodDetail;
 	private LinearLayout _linearlayout;
@@ -28,7 +31,7 @@ public class FoodDetailHelper extends AsyncTask<String, Integer, String> {
 	private String s3Address;
 	private String TAG = "BlueCheese";
 	
-	public FoodDetailHelper(String foodTitle,EditText _field7,LinearLayout linearlayout,Context context){
+	public FoodDetailActivityAsyncTask(String foodTitle,EditText _field7,LinearLayout linearlayout,Context context){
 		
 		_field_foodDetail = _field7;
 		title = foodTitle.replace(" ", "%20");
@@ -59,7 +62,7 @@ public class FoodDetailHelper extends AsyncTask<String, Integer, String> {
 			//waiting for get response
 			getThread.join();
 		} catch (InterruptedException e) {
-			Log.e(TAG, "Exception on FoodDetailHelper GetRunner thread: " + e.getMessage());			
+			Log.e(TAG, "Exception on FoodDetailActivityAsyncTask GetRunner thread: " + e.getMessage());			
 		}
 		
 		foodDetailResult = getR.getResult();

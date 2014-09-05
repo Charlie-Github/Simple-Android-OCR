@@ -3,7 +3,6 @@ package com.thebluecheese.android.activity;
 import java.util.Locale;
 
 import com.thebluecheese.android.activity.R;
-import com.thebluecheese.android.network.FoodDetailHelper;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -43,7 +42,7 @@ public class FoodDetailActivity extends Activity {
 		//wikiHelper whelper = new wikiHelper(foodTitlte,_field7,this);
 		//whelper.execute();
 		
-		FoodDetailHelper fhelper = new FoodDetailHelper(foodTitlte,_field7,scroll_layout,this);
+		FoodDetailActivityAsyncTask fhelper = new FoodDetailActivityAsyncTask(foodTitlte,_field7,scroll_layout,this);
 		fhelper.execute();
 		
 	}

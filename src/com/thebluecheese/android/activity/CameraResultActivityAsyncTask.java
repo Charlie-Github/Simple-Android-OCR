@@ -1,13 +1,14 @@
-package com.thebluecheese.android.localdb;
+package com.thebluecheese.android.activity;
 
 import java.util.Locale;
 
 
 
-import com.thebluecheese.android.activity.FoodDetailActivity;
+
 
 
 import com.thebluecheese.android.activity.R;
+import com.thebluecheese.android.localdb.LocalDbOperator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,13 +19,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-public class LocalSearchHelper extends AsyncTask<String, Integer, String> {
+public class CameraResultActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	private Context _context;
 	private LinearLayout _linearlayout;
 	private String[] searchResult;
 	private String _input;
 
-	public LocalSearchHelper(String inputSearch,LinearLayout linearlayout,Context context){
+	public CameraResultActivityAsyncTask(String inputSearch,LinearLayout linearlayout,Context context){
 		_input = inputSearch;
 		_linearlayout = linearlayout;
 		_context = context;

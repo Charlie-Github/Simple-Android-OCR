@@ -203,9 +203,9 @@ public class CameraActivity extends Activity {
     	
     	//#33b5e5
     	paint.setColor(Color.rgb(51,181,229));    	
-    	paint.setStrokeWidth(200);
-    	tempCanvas.drawLine(100, top+20, 100, bottom-20, paint);
-    	tempCanvas.drawLine(right-100, top+20, right-100, bottom-20, paint);
+    	paint.setStrokeWidth(20);
+    	tempCanvas.drawLine(0, bottom, right, bottom, paint);
+    	//tempCanvas.drawLine(right-100, top+20, right-100, bottom-20, paint);
     	
     	tempCanvas.drawBitmap(bitmap, 0, 0, null);
     	

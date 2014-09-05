@@ -1,5 +1,6 @@
 package com.thebluecheese.android.localdb;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +54,7 @@ public class ExternalDbOpenHelper extends SQLiteOpenHelper {
     
     private boolean checkDataBase() {
     	//perform a database existence check
+    	/*
         SQLiteDatabase checkDb = null;
         try {
             String path = DB_PATH + DB_NAME;
@@ -65,7 +67,10 @@ public class ExternalDbOpenHelper extends SQLiteOpenHelper {
         if (checkDb != null) {
             checkDb.close();
         }
-        return checkDb != null;
+        return checkDb != null ? true : false;
+        */
+    	File dbFile = context.getDatabasePath(DB_PATH + DB_NAME);
+        return dbFile.exists();
     }
     
     private void copyDataBase() throws IOException {

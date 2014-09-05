@@ -29,7 +29,7 @@ public class FoodSearchActivity extends Activity {
 	public class ButtonClickHandler implements View.OnClickListener {		
 		public void onClick(View view) {
 			String inputString = _searchField.getText().toString();
-			CameraResultActivityAsyncTask lsh = new CameraResultActivityAsyncTask(inputString,_linearResult,FoodSearchActivity.this);
+			FoodSearchActivityAsyncTask lsh = new FoodSearchActivityAsyncTask(inputString,_linearResult,FoodSearchActivity.this);
 			lsh.execute();
 		}
 	}	

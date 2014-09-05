@@ -30,7 +30,7 @@ public class LocalDbOperator {
 		String[] translates = TextParser.spliteAll(fromTess);
 		
 		this.combineKeywords(translates,3);
-		Log.i("TAG", "Database Combo: "+ keywordsCombo.toString());		
+		Log.i(TAG, "Database Combo: "+ keywordsCombo.toString());		
 		String[] comboArray = keywordsCombo.toArray(new String[keywordsCombo.size()]);
 		
 		ArrayList<String> translated = new ArrayList<String>();

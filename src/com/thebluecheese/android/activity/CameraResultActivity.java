@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
-
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.ocr.ImageResizer;
 
@@ -16,11 +14,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +27,7 @@ public class CameraResultActivity extends Activity {
 	public static final String PACKAGE_NAME = "com.thebluecheese.android.activity";
 	public static final String DATA_PATH = Environment
 			.getExternalStorageDirectory().toString() + "/BlueCheese/";
-	protected String _path = DATA_PATH + "/ocr_crop.jpg"; // image file
+	protected String _path = DATA_PATH + "/ocr.jpg"; // image file
 	
 	public static final String lang = "eng";
 	private static final String TAG = "BlueCheese";
@@ -164,10 +160,9 @@ public class CameraResultActivity extends Activity {
 	}	
 		
 	protected void readImage() {
-		Bitmap bitmap = ImageResizer.rotate(_path);
-		
+		Bitmap bitmap = ImageResizer.rotate(_path);		
 		Log.v(TAG, "Tesseract API begin");
-		CameraActivityAsyncTask tesshp = new CameraActivityAsyncTask(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);
+		CameraResultActivityAsyncTask tesshp = new CameraResultActivityAsyncTask(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);
 		//tesshp.execute();
 		// Execute in parallel
 		tesshp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

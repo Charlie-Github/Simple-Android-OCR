@@ -22,8 +22,7 @@ import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.localdb.LocalDbOperator;
 
 public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,String> {
-	protected String DATA_PATH;
-	protected String uncropPath;
+	protected String DATA_PATH;	
 	protected String lang;
 	protected Bitmap bitmap;	
 	protected Bitmap original_bitmap;
@@ -40,8 +39,7 @@ public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,Stri
 	
 	public CameraResultActivityAsyncTask(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		
-		DATA_PATH = path;
-		uncropPath = path+"ocr.jpg";	
+		DATA_PATH = path;			
 		lang = language;		
 		_imageView = ex_imageView;		
 		_progressDialog = progressDialog;		

@@ -117,10 +117,7 @@ public class CameraActivity extends Activity {
 		// get Camera parameters
 		Camera.Parameters params = mCamera.getParameters();
 		// set the focus mode
-		List<String> focusModes = params.getSupportedFocusModes();
-		if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-		}		
+		params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);			
 		// set hdr
 		List<String> sceneModes = params.getSupportedSceneModes();
 		if (sceneModes.contains(Camera.Parameters.SCENE_MODE_HDR)) {

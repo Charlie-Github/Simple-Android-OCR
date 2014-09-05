@@ -119,10 +119,10 @@ public class CameraActivity extends Activity {
 		// set the focus mode
 		params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);			
 		// set hdr
-		List<String> sceneModes = params.getSupportedSceneModes();
-		if (sceneModes.contains(Camera.Parameters.SCENE_MODE_HDR)) {
+		//List<String> sceneModes = params.getSupportedSceneModes();
+		//if (sceneModes.contains(Camera.Parameters.SCENE_MODE_HDR)) {
 			//params.setSceneMode(Camera.Parameters.SCENE_MODE_HDR);
-		}		
+		//}		
 		// set zoom
 		int zoom = 10;
 		int maxZoom = params.getMaxZoom(); 

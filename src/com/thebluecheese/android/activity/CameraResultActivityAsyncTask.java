@@ -6,8 +6,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.localdb.LocalDbOperator;
+import com.thebluecheese.android.ocr.ImageResizer;
 
 public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,String> {
 	protected String DATA_PATH;	
@@ -31,28 +34,36 @@ public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,Stri
 	protected LinearLayout _linearlayout;
 	protected Context context;
 	protected ProgressDialog _progressDialog;	
-	
+	protected String _path;
 	protected String recognizedText;
 	protected String[] keywords;
 	protected String TAG = "BlueCheese";
 
 	
-	public CameraResultActivityAsyncTask(String path, String language, Bitmap bit, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
+	public CameraResultActivityAsyncTask(String path, String language, ImageView ex_imageView, LinearLayout ex_linearlayout,ProgressDialog progressDialog, Context ex_context){
 		
-		DATA_PATH = path;			
+		DATA_PATH = path;
+		_path =  DATA_PATH + "/ocr.jpg";
 		lang = language;		
 		_imageView = ex_imageView;		
 		_progressDialog = progressDialog;		
 		_linearlayout = ex_linearlayout;
 		context = ex_context;
-		bitmap = bit;
+		//bitmap = bit;		
+		
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inSampleSize = 2;
+		bitmap = BitmapFactory.decodeFile(_path, options);
+		//bitmap = ImageResizer.rotate(_path);
 	}	
 	
 	@Override
 	protected void onPreExecute(){		
-		//set imageview
+		//set imageview		
+		bitmap = rotateBitmap(bitmap,90);
 		bitmap = drawRect(bitmap);
 		_imageView.setImageBitmap(bitmap);
+		
 	}
 	
 	@Override
@@ -65,6 +76,8 @@ public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,Stri
 		// test ends		
 		
 		//crop bitmap
+		
+		//_imageView.setImageBitmap(bitmap);
 		bitmap = cropBitmap(bitmap);
 		
 		//Tesseract
@@ -81,11 +94,12 @@ public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,Stri
 	@Override
 	protected void onPostExecute(String Text) {
 	   // execution of result of Long time consuming operation
-		setfields();		
+		
+		setfields();
 		_progressDialog.dismiss();
 		//_imageView.setImageURI(imageUri);
 		//_backgroudimageView.setClickable(false);
-		
+		bitmap.recycle();
 	  }
 	
 	protected void onProgressUpdate(Integer... progress) {		
@@ -105,7 +119,7 @@ public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,Stri
 		// image pre processor
 		// ImagePreProcessor ipp = new ImagePreProcessor();
 		// Bitmap tempBit = ipp.GrayscaleToBin(bitmap);		
-		
+		Log.v(TAG, "Tesseract API begin");
 		TessBaseAPI baseApi = new TessBaseAPI();
 		baseApi.setDebug(true);
 		baseApi.init(DATA_PATH, lang);
@@ -126,6 +140,14 @@ public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,Stri
 		return recognizedText;
 		
 	}
+	
+	private Bitmap rotateBitmap(Bitmap bitmap,int degree){
+		Matrix matrix = new Matrix();
+    	matrix.preRotate(degree);
+    	bitmap = Bitmap.createBitmap(bitmap ,0,0, bitmap .getWidth(), bitmap .getHeight(),matrix,true);
+    	return bitmap;
+	}
+	
 	public Bitmap cropBitmap(Bitmap bitmap){
 		Bitmap resizedbitmap;		
 		int x = 0;

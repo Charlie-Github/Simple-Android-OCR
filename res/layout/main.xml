@@ -16,9 +16,8 @@
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        
-        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"        
+        android:layout_alignParentLeft="true"
         android:background="#00000000" />
 
     <TextView

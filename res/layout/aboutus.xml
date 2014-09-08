@@ -15,8 +15,8 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:maxLines="20"
         android:scrollbars="vertical"
         android:text="@string/about_us" />
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"        
-        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:background="#00000000" />
 
 </RelativeLayout>

@@ -117,7 +117,10 @@ public class CameraActivity extends Activity {
 		// get Camera parameters
 		Camera.Parameters params = mCamera.getParameters();
 		// set the focus mode
-		params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);			
+		List<String> focusModes = params.getSupportedFocusModes();
+		if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+		}		
 		// set hdr
 		//List<String> sceneModes = params.getSupportedSceneModes();
 		//if (sceneModes.contains(Camera.Parameters.SCENE_MODE_HDR)) {
@@ -141,17 +144,19 @@ public class CameraActivity extends Activity {
 	private PictureCallback mPicture = new PictureCallback() {
 	    @Override
 	    public void onPictureTaken(byte[] data, Camera camera) {	    	
-	    	mbitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+	    	//mbitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 	    	// rotate picture
-	    	mbitmap = rotateBitmap(mbitmap,90);	
+	    	//mbitmap = rotateBitmap(mbitmap,90);	
 
 	        //original img
 	        try {
 	            FileOutputStream fos = new FileOutputStream(pictureFile);
 	            Log.v(TAG, "file: "+ pictureFile.getAbsolutePath().toString() );
-	            // write bitmap to file //fos.write(data);
-	            mbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);	            
+	            // write bitmap to file 
+	            fos.write(data);
+	            //mbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);	            
 	            fos.close();
+	           //mbitmap.recycle();
 	        } catch (FileNotFoundException e) {
 	            Log.d(TAG, "File not found: " + e.getMessage());
 	        } catch (IOException e) {
@@ -166,7 +171,7 @@ public class CameraActivity extends Activity {
 	    }
 	};
 	
-	private static File getOutputMediaFile(){
+	private File getOutputMediaFile(){
 	    // Create a media file name
 	    //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	    File mediaFile = new File(DATA_PATH+ File.separator +"OCR.jpg");	   

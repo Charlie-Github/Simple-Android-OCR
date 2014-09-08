@@ -15,7 +15,7 @@ public class ImageResizer {
 		String _path = filePath;
 		
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 2;			
+		options.inSampleSize = 2;
 		Bitmap bitmap = BitmapFactory.decodeFile(_path, options);
 
 		try {

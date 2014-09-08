@@ -36,7 +36,7 @@
 		        android:id="@+id/black_left_box"
 		        android:layout_width="10dp"
 		        android:layout_height="fill_parent"
-		        android:layout_alignParentEnd="true"
+		        android:layout_alignParentRight="true"
 		        android:background="#9f33b5e5" />
 	
 		    <View
@@ -49,7 +49,7 @@
 		        android:id="@+id/black_right_box"
 		        android:layout_width="10dp"
 		        android:layout_height="fill_parent"
-		        android:layout_alignParentStart="true"
+		        android:layout_alignParentLeft="true"
 		        android:background="#9f33b5e5" />
 		</RelativeLayout>
 

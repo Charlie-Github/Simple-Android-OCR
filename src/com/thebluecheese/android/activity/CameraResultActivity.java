@@ -39,6 +39,7 @@ public class CameraResultActivity extends Activity {
 	protected Button _searchBytype;	
 	
 	protected boolean _taken;
+	//protected Bitmap bitmap;
 	protected static final String PHOTO_TAKEN = "photo_taken";	
 	private ProgressDialog progressDialog;
 	
@@ -159,13 +160,12 @@ public class CameraResultActivity extends Activity {
 		}
 	}	
 		
-	protected void readImage() {
-		Bitmap bitmap = ImageResizer.rotate(_path);		
-		Log.v(TAG, "Tesseract API begin");
-		CameraResultActivityAsyncTask tesshp = new CameraResultActivityAsyncTask(DATA_PATH,lang,bitmap,_imageView,scroll_layout,progressDialog,this);
+	protected void readImage() {		
+		CameraResultActivityAsyncTask tesshp = new CameraResultActivityAsyncTask(DATA_PATH,lang,_imageView,scroll_layout,progressDialog,this);
 		//tesshp.execute();
 		// Execute in parallel
 		tesshp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		
 	}// readImage Ends
 	
 	

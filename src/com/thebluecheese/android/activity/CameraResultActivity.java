@@ -7,13 +7,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.thebluecheese.android.activity.R;
-import com.thebluecheese.android.ocr.ImageResizer;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;

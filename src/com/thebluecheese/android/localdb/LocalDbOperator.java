@@ -67,7 +67,30 @@ public class LocalDbOperator {
 		String[] array = translated.toArray(new String[translated.size()]);
 		database.close();
 		return array;
-	}	
+	}
+	
+	public String[] blurTopSearch(String input){	
+		// second main method
+		ArrayList<Integer> blurArraylist = this.searchByNameTopBlur(input);
+		ArrayList<String> translated = new ArrayList<String>();
+		
+		for(int i = 0; i < blurArraylist.size(); i++){
+			int fid = 0;
+			if(blurArraylist.get(i) != null){
+				// avoid null value in arraylist
+				fid = blurArraylist.get(i);
+			}			
+			String chinese_name = this.searchById(fid);
+			String title = this.searchTitleById(fid);
+			if(!chinese_name.equals("")){
+				translated.add(title+"|"+chinese_name);// en_Name|zh_name, pair				
+			}
+		}		
+		String[] array = translated.toArray(new String[translated.size()]);
+		database.close();
+		return array;
+	}
+	
 	public String searchById(int id){
 		// search Chinese name by id
 		// query(table_name,col_names[],where_statement,where_args_)
@@ -122,6 +145,26 @@ public class LocalDbOperator {
 		if(!name.equals("")){
 			name = name.toUpperCase(Locale.ENGLISH);			
 			Cursor foodCursor = database.query("Keyword",new String[]{"_id"}, "upper(title) like \'"+name+"%\'",null, null, null, null);
+			foodCursor.moveToFirst();
+			int id = 0;
+			if(!foodCursor.isAfterLast()) {
+	            do {
+	                id = foodCursor.getInt(0);
+	                ids.add(new Integer(id));	                
+	            } while (foodCursor.moveToNext());
+	        }
+			foodCursor.close();	
+		}
+		return ids;		
+	}
+	
+	public ArrayList<Integer> searchByNameTopBlur(String name){
+		// search food _id by blur name
+		name = name.trim();
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		if(!name.equals("")){
+			name = name.toUpperCase(Locale.ENGLISH);			
+			Cursor foodCursor = database.query("Keyword",new String[]{"_id"}, "upper(title) like \'"+name+"%\' LIMIT 50",null, null, null, null);
 			foodCursor.moveToFirst();
 			int id = 0;
 			if(!foodCursor.isAfterLast()) {

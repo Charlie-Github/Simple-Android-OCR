@@ -24,11 +24,13 @@ public class FoodSearchActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	private LinearLayout _linearlayout;
 	private String[] searchResult;
 	private String _input;
+	private String _searchType;
 
-	public FoodSearchActivityAsyncTask(String inputSearch,LinearLayout linearlayout,Context context){
+	public FoodSearchActivityAsyncTask(String inputSearch, String searchType,LinearLayout linearlayout,Context context){
 		_input = inputSearch;
 		_linearlayout = linearlayout;
 		_context = context;
+		_searchType = searchType;
 	}
 	
 	 @Override
@@ -40,7 +42,12 @@ public class FoodSearchActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	protected String doInBackground(String... params) {
 		
 		publishProgress(1);//call onProgressUpdate
-		searchFood(_input);		
+		if(_searchType.equals("all")){
+			searchFood(_input);		
+		}else{
+			int number = Integer.parseInt(_searchType);
+				searchSomeFood(_input);
+		}
 		return _input;
 	}
 	
@@ -50,6 +57,14 @@ public class FoodSearchActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		searchResult = ldboperator.blurSearch(inputText);
 		
 	}
+	
+	protected void searchSomeFood(String inputText){		
+		//local search begin		
+		LocalDbOperator ldboperator = new LocalDbOperator(_context);
+		searchResult = ldboperator.blurTopSearch(inputText);
+		
+	}
+	
 	@Override
 	protected void onPostExecute(String Text) {
 	   	_linearlayout.removeAllViews();

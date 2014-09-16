@@ -2,6 +2,7 @@ package com.thebluecheese.android.activity;
 
 import java.util.Locale;
 
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,7 @@ import android.widget.LinearLayout;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.thebluecheese.android.activity.R;
 import com.thebluecheese.android.localdb.LocalDbOperator;
-import com.thebluecheese.android.ocr.ImageResizer;
+
 
 public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,String> {
 	protected String DATA_PATH;	
@@ -72,7 +73,7 @@ public class CameraResultActivityAsyncTask extends AsyncTask<String,Integer,Stri
 		publishProgress(1);//call onProgressUpdate		
 		// test start		
 //		ImagePreProcessor ipp = new ImagePreProcessor();
-//		bitmap = ipp.process(bitmap);
+//		bitmap = ipp.process(bitmap);		
 		// test ends		
 		
 		//crop bitmap

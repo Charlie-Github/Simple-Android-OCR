@@ -87,7 +87,7 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	protected void setImageViews(ArrayList<FoodPhoto> photos){		
 		for(int i = 0; i<photos.size(); i++){
 			String photoKey = photos.get(i)._url;
-			ImageView imageView = new ImageView(_context);					
+			ImageView imageView = new ImageView(_context);
 			new DownloadImageTask(imageView).execute(s3Address + photoKey);
 			_linearlayout.addView(imageView);
 		}

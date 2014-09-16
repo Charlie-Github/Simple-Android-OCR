@@ -71,20 +71,18 @@ public class FoodSearchActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		setfields();
 	}
 	
-	protected void onProgressUpdate(Integer... progress) {		
+	protected void onProgressUpdate(Integer... progress) {
+		
+		/*
 		_linearlayout.removeAllViews();
 		Button text = new Button(_context);
-		text.setText(R.string.loading);
-		
-		//set button height
-		//int dps = 100;
-		//float scale = _context.getResources().getDisplayMetrics().density;
-		//int pixels = (int) (dps * scale + 0.5f);
-		//text.setHeight(pixels);
+		text.setText(R.string.loading);		
+
 		text.setBackgroundColor(Color.TRANSPARENT);
 		text.setGravity(Gravity.CENTER_VERTICAL);
 		
-		_linearlayout.addView(text);		
+		_linearlayout.addView(text);
+		*/	
 	}
 	
 	protected void setfields(){

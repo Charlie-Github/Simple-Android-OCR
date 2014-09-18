@@ -117,14 +117,14 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		public void onClick(View view) {			
 			//Weibo share
 			ShareParams sp = new ShareParams();
-			sp.setTitle("蓝知识： "+foodName);
-			sp.setText(foodDesc);
+			sp.setText("转自：蓝芝士\n "+""+foodName+"\n"+foodDesc);
 			sp.setImageUrl(foodImageAddress);
-			//Platform weibo = ShareSDK.getPlatform(SinaWeibo.NAME);
-			Platform weibo = ShareSDK.getPlatform(WechatMoments.NAME);
-			// 执行图文分享
 			
-			weibo.share(sp);
+			//Platform pf = ShareSDK.getPlatform(SinaWeibo.NAME);
+			Platform pf = ShareSDK.getPlatform(WechatMoments.NAME);
+			
+			// 执行图文分享
+			pf.share(sp);
 					
 			
 		}

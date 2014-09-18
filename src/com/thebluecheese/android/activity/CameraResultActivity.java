@@ -49,14 +49,14 @@ public class CameraResultActivity extends Activity {
     @Override
     public void onResume()
     {
-        super.onResume();      
+        super.onResume();
     }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// first install, prepare folder for tesseract
-		prepareFolder();		
-				
+		prepareFolder();
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera_result);
 		

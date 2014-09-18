@@ -1,5 +1,7 @@
 package com.thebluecheese.android.activity;
 
+import cn.sharesdk.framework.ShareSDK;
+
 import com.thebluecheese.android.activity.R;
 
 import android.app.Activity;
@@ -23,6 +25,8 @@ public class StarterActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		/*=====================Test area below===========================*/
+		
+		ShareSDK.initSDK(this);
 		
 		/*=======================Test Ends================================*/		
 		_button = (Button) findViewById(R.id.button);

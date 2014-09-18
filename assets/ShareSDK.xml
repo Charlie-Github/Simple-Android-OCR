@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DevInfor>
+   
+    <ShareSDK 
+        AppKey = "31b1a67afc80"/> <!-- 修改成你在sharesdk后台注册的应用的appkey"-->
+    
+    <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
+    <SinaWeibo
+        Id="1"
+        SortId="1"
+        AppKey="1741353781"
+        AppSecret="261e8318fef18e83a586f1391711e6ae"
+        RedirectUrl="http://www.sharesdk.cn"
+        ShareByAppClient="true"
+        Enable="true" />
+    
+    <Wechat
+        Id="4"
+        SortId="4"
+        AppId="wx4868b35061f87885"
+        BypassApproval="true"
+        Enable="true" />
+    
+    <WechatMoments
+        Id="5"
+        SortId="5"
+        AppId="wx4868b35061f87885"
+        BypassApproval="true"
+        Enable="true" />
+	
+</DevInfor>

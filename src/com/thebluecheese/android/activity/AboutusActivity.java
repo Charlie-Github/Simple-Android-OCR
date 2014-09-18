@@ -1,5 +1,10 @@
 package com.thebluecheese.android.activity;
 
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.sina.weibo.SinaWeibo.ShareParams;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,14 +24,30 @@ public class AboutusActivity extends Activity {
 		setContentView(R.layout.aboutus);
 		_testbutton = (Button)findViewById(R.id.testbutton);
 		_testbutton.setOnClickListener(new ButtonClickHandler());
+		
+		
 	}
 	
 	public class ButtonClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
+			/*
 			// return back to this activity
 			Log.v(TAG, "Starting Camera Result Activity");
 			Intent intent = new Intent(AboutusActivity.this, AboutusActivity.class);
 			startActivity(intent);
+			*/
+			
+			
+			//Weibo share
+			ShareParams sp = new ShareParams();
+			sp.setText("测试分享的文本");
+			sp.setImagePath("");
+			Platform weibo = ShareSDK.getPlatform(SinaWeibo.NAME);
+			
+			// 执行图文分享
+			weibo.share(sp);
+					
+			
 		}
 	}
 

@@ -7,12 +7,16 @@ import com.thebluecheese.android.activity.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 public class FoodDetailActivity extends Activity {
 	// protected ImageView _image;
 	protected String TAG = "BlueCheese";
+	
+	protected ImageButton _shareButton;
 	protected EditText _field5;
 	protected EditText _field6;
 	protected EditText _field7;
@@ -23,6 +27,7 @@ public class FoodDetailActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.food_detail);
+		_shareButton = (ImageButton) findViewById(R.id.shareButton);
 		_field5 = (EditText) findViewById(R.id.field5);
 		_field6 = (EditText) findViewById(R.id.filed6);
 		_field7 = (EditText) findViewById(R.id.filed7);
@@ -43,7 +48,7 @@ public class FoodDetailActivity extends Activity {
 		//wikiHelper whelper = new wikiHelper(foodTitlte,_field7,this);
 		//whelper.execute();
 		
-		FoodDetailActivityAsyncTask fhelper = new FoodDetailActivityAsyncTask(foodTitlte,_field7,scroll_layout,this);
+		FoodDetailActivityAsyncTask fhelper = new FoodDetailActivityAsyncTask(foodTitlte,_field7,_shareButton,scroll_layout,this);
 		fhelper.execute();
 		
 		

@@ -2,7 +2,15 @@ package com.thebluecheese.android.activity;
 
 import java.util.ArrayList;
 
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.sina.weibo.SinaWeibo.ShareParams;
+import cn.sharesdk.wechat.friends.Wechat;
+import cn.sharesdk.wechat.moments.WechatMoments;
+
 import com.thebluecheese.android.activity.R;
+import com.thebluecheese.android.activity.AboutusActivity.ButtonClickHandler;
 import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
 
@@ -16,24 +24,31 @@ import com.thebluecheese.android.network.JsonParser;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	
 	private EditText _field_foodDetail;
+	private ImageButton _shareButton;
 	private LinearLayout _linearlayout;
 	private Context _context;
 	private String foodDetailResult;
 	private String title;
 	private String serverAddress;
 	private String s3Address;
+	private String foodName;
+	private String foodDesc;
+	private String foodImageAddress;
 	private String TAG = "BlueCheese";
 	
-	public FoodDetailActivityAsyncTask(String foodTitle,EditText _field7,LinearLayout linearlayout,Context context){
+	public FoodDetailActivityAsyncTask(String foodTitle,EditText _field7,ImageButton shareButton,LinearLayout linearlayout,Context context){
 		
 		_field_foodDetail = _field7;
+		_shareButton = shareButton;
 		title = foodTitle.replace(" ", "%20");
 		foodDetailResult = "";
 		_context = context;
@@ -66,6 +81,8 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		}
 		
 		foodDetailResult = getR.getResult();
+		_shareButton.setOnClickListener(new ButtonClickHandler());		
+		
 		return foodDetailResult;
 	}
 	@Override
@@ -73,8 +90,9 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		
 		JsonParser jp = new JsonParser();
 		Food f = jp.parseFood(foodDetailResult);
-			
-		_field_foodDetail.setText(f._description);
+		foodDesc = f._description;
+		foodName =f._name;
+		_field_foodDetail.setText(foodDesc);
 		_field_foodDetail.setSelection(0);
 		setImageViews(f._photos);
 	  }
@@ -88,10 +106,28 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		for(int i = 0; i<photos.size(); i++){
 			String photoKey = photos.get(i)._url;
 			ImageView imageView = new ImageView(_context);
-			new DownloadImageTask(imageView).execute(s3Address + photoKey);
+			foodImageAddress = s3Address + photoKey;
+			new DownloadImageTask(imageView).execute(foodImageAddress);			
 			_linearlayout.addView(imageView);
 		}
 		
+	}
+	
+	public class ButtonClickHandler implements View.OnClickListener {
+		public void onClick(View view) {			
+			//Weibo share
+			ShareParams sp = new ShareParams();
+			sp.setTitle("蓝知识： "+foodName);
+			sp.setText(foodDesc);
+			sp.setImageUrl(foodImageAddress);
+			//Platform weibo = ShareSDK.getPlatform(SinaWeibo.NAME);
+			Platform weibo = ShareSDK.getPlatform(WechatMoments.NAME);
+			// 执行图文分享
+			
+			weibo.share(sp);
+					
+			
+		}
 	}
 
 }

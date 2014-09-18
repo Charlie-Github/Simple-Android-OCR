@@ -20,6 +20,7 @@ public class FoodDetailActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.food_detail);
 		_field5 = (EditText) findViewById(R.id.field5);
@@ -44,6 +45,7 @@ public class FoodDetailActivity extends Activity {
 		
 		FoodDetailActivityAsyncTask fhelper = new FoodDetailActivityAsyncTask(foodTitlte,_field7,scroll_layout,this);
 		fhelper.execute();
+		
 		
 	}
 

@@ -14,7 +14,7 @@ public class GetRunner implements Runnable{
 	private String serverURL;
 	private String parameters;
 	private String result;
-	private String TAG = "BlueCheeseNetwork";
+	private String TAG = "BlueCheese";
 	
 	public GetRunner(String url, String params){
 		serverURL = url;

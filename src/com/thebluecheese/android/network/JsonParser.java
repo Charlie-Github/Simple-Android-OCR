@@ -1,5 +1,7 @@
 package com.thebluecheese.android.network;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,6 +10,7 @@ import android.util.Log;
 
 import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
+import com.thebluecheese.android.basic.FoodReview;
 
 public class JsonParser {
 	String TAG = "BlueCheese";
@@ -53,8 +56,36 @@ public class JsonParser {
                 Log.e(TAG,"Exception on Json parser: "+e.getMessage());
             }
         }
-		Log.v(TAG, "JsonParser: "+ localFood._name);
 		return localFood;
+	}
+	
+	public ArrayList<FoodReview> parseReview(String jsonStr){
+		ArrayList<FoodReview> foodReviews = new ArrayList<FoodReview>();
+		
+		if (jsonStr != null) {
+			
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr); 
+                JSONArray results = jsonObj.getJSONArray("result");                
+                
+                // looping through "result"
+                for (int i = 0; i < results.length(); i++) {
+                	
+                	FoodReview tempReview = new FoodReview();
+                    JSONObject review = results.getJSONObject(i);
+                    tempReview._fid = review.getInt("fid");
+                    tempReview._comments = review.getString("comments");                     
+                    JSONObject review_creater = review.getJSONObject("review_creater");                   	
+                    tempReview. _review_creater= review_creater.getString("name"); 
+                    
+                    foodReviews.add(tempReview);             
+                }
+            } catch (JSONException e) {
+                Log.e(TAG,"Exception on Json parser review: "+e.getMessage());
+            }
+        }
+		
+		return foodReviews;
 	}
 
 }

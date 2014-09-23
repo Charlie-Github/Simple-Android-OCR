@@ -70,6 +70,8 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		_shareButton = shareButton;
 		title = foodTitle.replace(" ", "%20");
 		foodDetailResult = "";
+		first_half = "";
+		second_half = "";
 		_context = context;
 		_root_view = root_view;
 		_linearlayout = linearlayout;
@@ -101,8 +103,12 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	@Override
 	protected void onPostExecute(String Text) {
 		
-		first_half = foodDesc.substring(0,75);
-		second_half = foodDesc.substring(75);
+		if(foodDesc.length() > 75){
+			first_half = foodDesc.substring(0,75);
+			second_half = foodDesc.substring(75);
+		}else{
+			first_half = foodDesc;
+		}
 		
 		if(second_half.length() > 1){
 			//add a button
@@ -112,9 +118,12 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 			moreInfo.setText("更多...");
 			moreInfo.setOnClickListener(new moreClickHandler());
 			_detail_layout.addView(moreInfo);
+			_field_foodDetail.setText(first_half+"...");
+		}else{
+			_field_foodDetail.setText(first_half);
 		}
 		
-		_field_foodDetail.setText(first_half+"...");
+		
 		_field_foodDetail.setSelection(0);
 		setImageViews(food._photos);
 		setReviewViews(reviews);
@@ -150,7 +159,8 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 			EditText text = new EditText(_context);
 			text.setGravity(Gravity.CENTER_VERTICAL);
 			text.setKeyListener(null);
-			text.setText(creater+": \n"+comment);	
+			text.setText(creater+": \n"+comment);
+
 			
 			//text.setBackgroundColor(Color.TRANSPARENT);			
 			_detail_layout.addView(text);					

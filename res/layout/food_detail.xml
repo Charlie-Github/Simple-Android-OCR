@@ -26,7 +26,7 @@
 		    android:layout_alignParentRight="true"
 		    android:layout_alignParentTop="true"
 		    android:background="@android:color/transparent"
-		    android:src="@drawable/weixin" />
+		    android:src="@drawable/share" />
 				
 	</RelativeLayout>
 

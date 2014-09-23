@@ -1,5 +1,8 @@
 package com.thebluecheese.android.activity;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
@@ -7,15 +10,19 @@ import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.sina.weibo.SinaWeibo.ShareParams;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 public class AboutusActivity extends Activity {
 	protected Button _testbutton;
+	protected RelativeLayout aboutView;
 	String TAG = "TAG";
 
 	@Override
@@ -24,18 +31,18 @@ public class AboutusActivity extends Activity {
 		setContentView(R.layout.aboutus);
 		_testbutton = (Button)findViewById(R.id.testbutton);
 		_testbutton.setOnClickListener(new ButtonClickHandler());
-		
+		aboutView = (RelativeLayout)findViewById(R.id.aboutusView);
 		
 	}
 	
 	public class ButtonClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
-			
+			/*
 			// return back to this activity
 			Log.v(TAG, "Starting Camera Result Activity");
 			Intent intent = new Intent(AboutusActivity.this, LoginActivity.class);
 			startActivity(intent);
-			
+			*/
 			
 			/*
 			//Weibo share
@@ -47,6 +54,8 @@ public class AboutusActivity extends Activity {
 			// 执行图文分享
 			weibo.share(sp);
 			*/	
+			
+			takeScreenShot(aboutView);
 			
 		}
 	}
@@ -69,4 +78,18 @@ public class AboutusActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	public void takeScreenShot(View view ){ 
+	     view.setDrawingCacheEnabled( true); 
+	     view.buildDrawingCache(); 
+	     Bitmap bitmap = view.getDrawingCache(); 
+	if (bitmap != null) { 
+	try { 
+	         FileOutputStream out = new FileOutputStream(Environment.getExternalStorageDirectory()+File.separator+"Charlie-screenshot.png" ); 
+	         bitmap.compress(Bitmap.CompressFormat. PNG, 100, out); 
+	       } catch (Exception e) { 
+	         e.printStackTrace(); 
+	       } 
+	     } 
+	 } 
 }

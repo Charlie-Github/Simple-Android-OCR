@@ -1,5 +1,7 @@
 package com.thebluecheese.android.activity;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import cn.sharesdk.framework.Platform;
@@ -10,7 +12,6 @@ import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 
 import com.thebluecheese.android.activity.R;
-import com.thebluecheese.android.activity.AboutusActivity.ButtonClickHandler;
 import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
 
@@ -23,8 +24,10 @@ import com.thebluecheese.android.network.GetRunner;
 import com.thebluecheese.android.network.JsonParser;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -40,6 +43,7 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	private EditText _field_foodDetail;
 	private ImageButton _shareButton;
 	LinearLayout _detail_layout;
+	LinearLayout _root_view;
 	private LinearLayout _linearlayout;
 	private Context _context;
 	private String foodDetailResult;
@@ -49,46 +53,68 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	private String reviewServerAddress;
 	private String s3Address;
 	private String foodName;
+	private String foodTitle;
 	private int foodId;
 	private String foodDesc;
 	private String foodImageAddress;
 	private String TAG = "BlueCheese";
 	private ArrayList<FoodReview> reviews = new ArrayList<FoodReview>();
 	private Food food;
+	String first_half;
+	String second_half;
+	Button moreInfo;
 	
-	public FoodDetailActivityAsyncTask(String foodTitle,EditText _field7,ImageButton shareButton,LinearLayout detail_layout,LinearLayout linearlayout,Context context){
+	public FoodDetailActivityAsyncTask(String foodTitle,EditText _field7,ImageButton shareButton,LinearLayout root_view,LinearLayout detail_layout,LinearLayout linearlayout,Context context){
 		
 		_field_foodDetail = _field7;
 		_shareButton = shareButton;
 		title = foodTitle.replace(" ", "%20");
 		foodDetailResult = "";
 		_context = context;
+		_root_view = root_view;
 		_linearlayout = linearlayout;
 		_detail_layout = detail_layout;
+		moreInfo = new Button(_context);
+		
 		foodServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/food";		
 		reviewServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/review";
 		s3Address = "https://s3-us-west-2.amazonaws.com/blue-cheese-deployment/";
 	}
 	
 	@Override
-	 protected void onPreExecute(){
+	protected void onPreExecute(){
 		 
 	 }
 	@Override
+	
 	protected String doInBackground(String... params) {
 		// execution of result of Long time consuming operation
 		// search begin
 		
 		publishProgress(1);
 		getFoodDetail();
-		getFoodReview();	
-			
+		getFoodReview();
 		
 		return foodDetailResult;
 	}
+	
 	@Override
-	protected void onPostExecute(String Text) {				
-		_field_foodDetail.setText(foodDesc);
+	protected void onPostExecute(String Text) {
+		
+		first_half = foodDesc.substring(0,75);
+		second_half = foodDesc.substring(75);
+		
+		if(second_half.length() > 1){
+			//add a button
+			
+			moreInfo.setBackgroundColor(Color.TRANSPARENT);
+			moreInfo.setGravity(Gravity.CENTER_VERTICAL);
+			moreInfo.setText("更多...");
+			moreInfo.setOnClickListener(new moreClickHandler());
+			_detail_layout.addView(moreInfo);
+		}
+		
+		_field_foodDetail.setText(first_half+"...");
 		_field_foodDetail.setSelection(0);
 		setImageViews(food._photos);
 		setReviewViews(reviews);
@@ -97,11 +123,13 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	  }
 	
 	protected void onProgressUpdate(Integer... progress) {
+		// loading
 		String loading = _context.getResources().getString(R.string.loading);
 		_field_foodDetail.setText(loading);
    }
 	
-	protected void setImageViews(ArrayList<FoodPhoto> photos){		
+	protected void setImageViews(ArrayList<FoodPhoto> photos){
+		// set food images
 		for(int i = 0; i<photos.size(); i++){
 			String photoKey = photos.get(i)._url;
 			ImageView imageView = new ImageView(_context);
@@ -112,7 +140,8 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		
 	}
 	
-	protected void setReviewViews(ArrayList<FoodReview> foodReviews){		
+	protected void setReviewViews(ArrayList<FoodReview> foodReviews){
+		// populate food reviews
 		for(int i = 0; i<foodReviews.size(); i++){
 			
 			String creater = foodReviews.get(i)._review_creater;
@@ -128,8 +157,7 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 			
 		}
 		
-	}
-	
+	}	
 	
 	protected void getFoodDetail(){
 		
@@ -152,7 +180,7 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		foodDesc = food._description;
 		foodName =food._name;
 		foodId = food._fid;
-		
+		foodTitle = food._title;
 	}
 	
 	protected void getFoodReview(){
@@ -175,21 +203,54 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		reviews = jp.parseReview(foodReviewResult);
 	}
 
+	public void takeScreenShot(View view ){
+		view = view.getRootView();
+	    view.setDrawingCacheEnabled( true); 
+	    view.buildDrawingCache(); 
+	    Bitmap bitmap = view.getDrawingCache(); 
+	    if (bitmap != null) { 
+	    	try { 
+	    		FileOutputStream out = new FileOutputStream(Environment.getExternalStorageDirectory()+File.separator+"BlueCheese"+File.separator+"Charlie-screenshot.png" ); 
+	    		bitmap.compress(Bitmap.CompressFormat. PNG, 100, out);
+	    		out.flush();
+	    		out.close();
+	    	} catch (Exception e) { 
+	    		e.printStackTrace(); 
+	    	} 
+	    } 
+	} 
+	
 	
 	public class ButtonClickHandler implements View.OnClickListener {
 		public void onClick(View view) {			
 			//Weibo share
 			ShareParams sp = new ShareParams();
-			sp.setText("转自：蓝芝士\n"+""+foodName+"\n"+foodDesc);
-			sp.setImageUrl(foodImageAddress);
-			
+			sp.setText("[蓝芝士]食物小百科：\n"+foodName+"("+foodTitle+")\n"+"下载蓝芝士客户端，实时菜单翻译就在\n"+"https://appsto.re/us/SQgV1.i");
+			//sp.setImageUrl(foodImageAddress);
+			sp.setImagePath(Environment.getExternalStorageDirectory()+File.separator+"BlueCheese"+File.separator+"Charlie-screenshot.png");
 			//Platform pf = ShareSDK.getPlatform(SinaWeibo.NAME);
 			Platform pf = ShareSDK.getPlatform(WechatMoments.NAME);
 			
 			// 执行图文分享
 			pf.share(sp);
-					
 			
+			//test below
+			takeScreenShot(_root_view);
+			
+		}
+	}
+	public class moreClickHandler implements View.OnClickListener {
+		public void onClick(View view) {
+			_field_foodDetail.setText(first_half+second_half);
+			moreInfo.setText("精简");
+			moreInfo.setOnClickListener(new lessClickHandler());
+		}
+	}
+	public class lessClickHandler implements View.OnClickListener {
+		public void onClick(View view) {
+			_field_foodDetail.setText(first_half+"...");
+			moreInfo.setText("更多信息...");
+			moreInfo.setOnClickListener(new moreClickHandler());
 		}
 	}
 

@@ -7,6 +7,10 @@ import com.thebluecheese.android.activity.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,6 +25,7 @@ public class FoodDetailActivity extends Activity {
 	protected EditText _field5;
 	protected EditText _field6;
 	protected EditText _field7;
+	protected LinearLayout root_view;
 	protected LinearLayout detail_layout;
 	protected LinearLayout scroll_layout;
 	
@@ -33,7 +38,8 @@ public class FoodDetailActivity extends Activity {
 		_field5 = (EditText) findViewById(R.id.field5);
 		_field6 = (EditText) findViewById(R.id.filed6);
 		_field7 = (EditText) findViewById(R.id.filed7);
-		detail_layout = (LinearLayout) findViewById(R.id.detailView);;
+		root_view = (LinearLayout) findViewById(R.id.rootView);
+		detail_layout = (LinearLayout) findViewById(R.id.detailView);
 		scroll_layout = (LinearLayout) findViewById(R.id.food_photo_scroll_linear);
 		Intent intent = getIntent();
 		
@@ -51,11 +57,11 @@ public class FoodDetailActivity extends Activity {
 		//wikiHelper whelper = new wikiHelper(foodTitlte,_field7,this);
 		//whelper.execute();
 		
-		FoodDetailActivityAsyncTask fhelper = new FoodDetailActivityAsyncTask(foodTitlte,_field7,_shareButton,detail_layout,scroll_layout,this);
+		FoodDetailActivityAsyncTask fhelper = new FoodDetailActivityAsyncTask(foodTitlte,_field7,_shareButton,root_view,detail_layout,scroll_layout,this);
 		fhelper.execute();
 		
 		
 	}
-
+	
 		
 }

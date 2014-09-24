@@ -11,6 +11,7 @@ import android.util.Log;
 import com.thebluecheese.android.basic.Food;
 import com.thebluecheese.android.basic.FoodPhoto;
 import com.thebluecheese.android.basic.FoodReview;
+import com.thebluecheese.android.basic.User;
 
 public class JsonParser {
 	String TAG = "BlueCheese";
@@ -86,6 +87,45 @@ public class JsonParser {
         }
 		
 		return foodReviews;
+	}
+	
+	public User parseUser(String jsonStr){
+		/*
+		{
+			"result":
+				{
+					"selfie":"default_selfie.png",
+					"uid":45,
+					"last_login_time":1411574612000,
+					"email":"gcte2010@gmail.com",
+					"privilege":1,
+					"name":"Charlie is long"
+				},
+			"status":true,
+			"action":"login",
+			"log":"login succeed"
+		}
+		*/
+		
+		User user = new User();
+		
+		if (jsonStr != null) {
+			
+        	try {
+            	JSONObject jsonObj = new JSONObject(jsonStr);
+                user._log = jsonObj.getString("log");                
+                JSONObject result = jsonObj.getJSONObject("result");
+                user._selfie = result.getString("selfie");
+                user._uid = result.getInt("uid");
+                user._name = result.getString("name");
+                user._email = result.getString("email");            
+            
+            } catch (JSONException e) {
+                Log.e(TAG,"Exception on Json parser user: "+e.getMessage());
+            }
+        }
+		return user;
+		
 	}
 
 }

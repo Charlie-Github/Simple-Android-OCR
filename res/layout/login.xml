@@ -41,10 +41,12 @@
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textEmail"
+        android:layout_alignRight="@+id/textEmail"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="#00000000"
-        android:text="登录" />
+        android:background="#ff36BBE0"
+        android:text="登录"
+        android:textColor="#ffffffff" />
 
     <Button
         android:id="@+id/signUpButton"

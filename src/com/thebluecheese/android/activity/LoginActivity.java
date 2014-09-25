@@ -53,8 +53,7 @@ public class LoginActivity extends Activity {
 			editor.putString("email", "");
 			editor.putString("pwd", "");
 			editor.putString("name", "");
-			editor.putString("uid", "");
-			editor.putString("loginState", "false");
+			editor.putString("uid", "");			
 			editor.commit();
 			
 		}

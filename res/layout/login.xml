@@ -3,6 +3,7 @@
     android:id="@+id/loginView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context="com.thebluecheese.android.activity.LoginActivity" >
     
     <ImageView
@@ -11,33 +12,8 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/login" />
-    
-    <TextView
-        android:id="@+id/loginErrortext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textEmail"
-        android:layout_alignLeft="@+id/textEmail"
-        android:layout_marginBottom="19dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="#00000000"
-        android:text="登录" />
 
-    <Button
-        android:id="@+id/signUpButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/loginButton"
-        android:layout_below="@+id/loginButton"
-        android:background="#00000000"
-        android:text="注册" />
 
     <EditText
         android:id="@+id/textEmail"
@@ -45,13 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/loginButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="89dp"
+        android:layout_marginBottom="90dp"
         android:ems="10"
         android:hint="邮箱"
-        android:inputType="textEmailAddress" >
-
-        <requestFocus />
-    </EditText>
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/textPwd"
@@ -59,9 +32,35 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/loginButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="20dp"
         android:ems="10"
         android:hint="密码"
         android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="#00000000"
+        android:text="登录" />
+
+    <Button
+        android:id="@+id/signUpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/loginButton"
+        android:layout_marginTop="18dp"
+        android:background="#00000000"
+        android:text="注册" />
+
+    <TextView
+        android:id="@+id/loginErrortext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"/>
     
 </RelativeLayout>

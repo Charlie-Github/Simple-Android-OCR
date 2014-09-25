@@ -39,5 +39,14 @@
         android:layout_marginBottom="49dp"
         android:ems="10"
         android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/signUpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textEmail"
+        android:layout_alignTop="@+id/loginButton"
+        android:layout_marginRight="15dp"
+        android:text="Button" />
     
 </RelativeLayout>

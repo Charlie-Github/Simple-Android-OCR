@@ -1,105 +1,118 @@
 package com.thebluecheese.android.activity;
 
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
+
+
+
+
+
+
+
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+
+
+
+
+
+
+
+
 import com.thebluecheese.android.basic.User;
+import com.thebluecheese.android.network.GetRunner;
 import com.thebluecheese.android.network.JsonParser;
+import com.thebluecheese.android.network.LoginHelper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	String TAG = "BlueCheese";
+	
+	Context _context;
+	EditText _emailText;
+	EditText _pwdText;
+	Button _loginButton;
+	
 	String userServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/user";
 	String responsText;
 	String _email;
 	String _pwd;
+	boolean _loginState;
 	User user;
-	Context _context;
+
 	
-	public LoginActivityAsyncTask(String email,String pwd,Context context){
+	public LoginActivityAsyncTask(EditText emailText, EditText pwdText,Button loginButton, Context context){
+		
 		responsText = "";
-		_email = email;
-		_pwd = pwd;
+		_emailText = emailText;
+		_pwdText = pwdText;
+		_loginButton = loginButton;
 		user = new User();
 		_context = context;
+		_loginState = false;
+		
+		
 	}
 	
 	@Override
 	protected String doInBackground(String... params) {
-		// TODO Auto-generated method stub
-		_pwd = md5(_pwd);
-		postData();
+		// TODO Auto-generated method stub		
 		
-        JsonParser jp = new JsonParser();
-		user = jp.parseUser(responsText);
-		
-		SharedPreferences sharedPreferences = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-		Editor editor = sharedPreferences.edit();//获取编辑器
-		editor.putString("email", _email);
-		editor.putString("pwd", _pwd);
-		editor.commit();
+		// 1.try login
+		_loginState = tryLogin();//no input args
 		
 		
-		SharedPreferences sharedPre = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-		String username=sharedPre.getString("email", "");
-		String password=sharedPre.getString("pwd", "");
-		
-		
-		Log.i(TAG, "User login async : " +  user._uid);
+		if(_loginState == true){			
+			Intent intent = new Intent(_context, CameraResultActivity.class);
+			_context.startActivity(intent);
+		}
 		
 		return null;
 	}
+	
+	@Override
+	protected void onPostExecute(String Text) {
+	   // execution of result of Long time consuming operation
+		
+		_loginButton.setOnClickListener(new loginClickHandler());
+	  }
 
-	public void postData() {
-	    // Create a new HttpClient and Post Header
-	    HttpClient httpclient = new DefaultHttpClient();
-	    HttpPost httppost = new HttpPost(userServerAddress);
-	    JSONObject json = new JSONObject();	    
-	    try {
-	        // Add your data	       
-	        json.put("email", _email);
-	        json.put("pwd", _pwd);
-	        json.put("action", "login");
-	        StringEntity se = new StringEntity( json.toString());
-	        se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-	        httppost.setEntity(se);
-	        // Execute HTTP Post Request
-	        HttpResponse response = httpclient.execute(httppost);	        
-	        // 判断是够请求成功
-	        if (response.getStatusLine().getStatusCode() == 200) {
-	        	// 获取返回的数据
-	        	responsText = EntityUtils.toString(response.getEntity(), "UTF-8");
-	        } else {
-	        	Log.i("HttpPost", "HttpPost方式请求失败");
-	        }
-	        
-	    } catch (Exception e) {
-	        // TODO Auto-generated catch block
-	    }		
-	} 
+	public class loginClickHandler implements View.OnClickListener {
+		public void onClick(View view) {
+			_email = _emailText.getText().toString();
+			_pwd = md5(_pwdText.getText().toString());
+			
+			_loginState = firstTimeLogin(_email, _pwd);
+			
+			if(_loginState == true){
+				Intent intent = new Intent(_context, CameraResultActivity.class);
+				_context.startActivity(intent);
+			}
+		}
+	}	
 	
 	public static String md5(String string) {
 	    byte[] hash;
@@ -123,27 +136,71 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	    return hex.toString();
 	}
 	
-	public void checkUser(){
+	public boolean firstTimeLogin(String email, String password){
+		User tempUser = new User();
+		boolean loginState = false;
 		SharedPreferences sharedPreferences = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
 		
+		//Post login request		
+		LoginHelper lh = new LoginHelper(email , password);
+		Thread postThread = new Thread(lh);
+		postThread.start();			
+		try {
+			//waiting for get response
+			postThread.join();
+		} catch (InterruptedException e) {
+			Log.e(TAG, "Exception" + e);			
+		}		
+		tempUser = lh.getUser();		
+		
 		//check login log
-		if(user._log.equals("login succeed")){
+		if(tempUser._log.equals("login succeed")){
 			//user verified by server
 			Editor editor = sharedPreferences.edit();//获取编辑器
-			editor.putString("email", user._email);
-			editor.putString("pwd", _pwd);
-			editor.putString("name", user._name);
-			editor.putString("uid", user._uid+"");
+			editor.putString("email", tempUser._email);
+			editor.putString("pwd", password);
+			editor.putString("name", tempUser._name);
+			editor.putString("uid", tempUser._uid+"");
 			editor.commit();
+			loginState = true;
 		}else{
 			//login failed
+			loginState = false;
 		}
-		
-		
+		Log.i(TAG, "first time login state: "+ loginState);
+		return loginState;
+	}
+	
+	public boolean tryLogin(){
+		//try to login server using exist info
+		boolean loginState = false;
+		User tempUser = new User();
+				
+		SharedPreferences sharedPre = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+		String email = sharedPre.getString("email", "");
+		String password = sharedPre.getString("pwd", "");
 
+		//Post login request		
+		LoginHelper lh = new LoginHelper(email , password);
+		Thread postThread = new Thread(lh);
+		postThread.start();			
+		try {
+			//waiting for get response
+			postThread.join();
+		} catch (InterruptedException e) {
+			Log.e(TAG, "Exception" + e);			
+		}		
+		tempUser = lh.getUser();
 		
-		
-
+		if(tempUser._log.equals("login succeed")){
+			//user already loged in once
+			loginState = true;
+		}else{
+			loginState = false;
+		}
+		Log.i(TAG, "try login state: "+ loginState);
+		return loginState;
 		
 	}
+	
 }

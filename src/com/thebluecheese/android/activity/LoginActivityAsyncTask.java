@@ -13,6 +13,8 @@ import java.security.NoSuchAlgorithmException;
 
 
 
+
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -33,11 +35,14 @@ import org.json.JSONObject;
 
 
 
+
+
 import com.thebluecheese.android.basic.User;
 import com.thebluecheese.android.network.GetRunner;
 import com.thebluecheese.android.network.JsonParser;
 import com.thebluecheese.android.network.LoginHelper;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,6 +52,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	String TAG = "BlueCheese";
@@ -54,7 +60,9 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	Context _context;
 	EditText _emailText;
 	EditText _pwdText;
+	TextView _errorText;
 	Button _loginButton;
+	protected ProgressDialog _progressDialog;
 	
 	String userServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/user";
 	String responsText;
@@ -64,16 +72,20 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	User user;
 
 	
-	public LoginActivityAsyncTask(EditText emailText, EditText pwdText,Button loginButton, Context context){
+	public LoginActivityAsyncTask(EditText emailText, EditText pwdText,TextView errorText,Button loginButton,ProgressDialog progressDialog, Context context){
 		
 		responsText = "";
 		_emailText = emailText;
 		_pwdText = pwdText;
+		_errorText = errorText;
 		_loginButton = loginButton;
 		user = new User();
 		_context = context;
 		_loginState = false;
-		
+		_progressDialog = progressDialog;
+		_progressDialog = new ProgressDialog(_context);				
+		_progressDialog.setCancelable(false);
+		_progressDialog.setCanceledOnTouchOutside(false);
 		
 	}
 	
@@ -82,8 +94,8 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 		// TODO Auto-generated method stub		
 		
 		// 1.try login
-		_loginState = tryLogin();//no input args
-		
+		publishProgress(1);//call onProgressUpdate
+		_loginState = tryLogin();//no input args		
 		
 		if(_loginState == true){			
 			Intent intent = new Intent(_context, CameraResultActivity.class);
@@ -96,12 +108,24 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	@Override
 	protected void onPostExecute(String Text) {
 	   // execution of result of Long time consuming operation
-		
+		_errorText.setText("");
+		_progressDialog.dismiss();
 		_loginButton.setOnClickListener(new loginClickHandler());
-	  }
+	 }
+	
+	protected void onProgressUpdate(Integer... progress) {
+		
+		String loadingmessage = _context.getResources().getString(R.string.logining);		
+		_errorText.setText(loadingmessage);
+		_progressDialog.setMessage(loadingmessage);
+		_progressDialog.show();	
+
+    }
+	
 
 	public class loginClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
+						
 			_email = _emailText.getText().toString();
 			_pwd = md5(_pwdText.getText().toString());
 			
@@ -163,15 +187,19 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 			editor.putString("uid", tempUser._uid+"");
 			editor.commit();
 			loginState = true;
+			_errorText.setText("");
 		}else{
 			//login failed
 			loginState = false;
+			String errormessage = _context.getResources().getString(R.string.loginError);	
+			_errorText.setText(errormessage);
 		}
 		Log.i(TAG, "first time login state: "+ loginState);
 		return loginState;
 	}
 	
 	public boolean tryLogin(){
+		
 		//try to login server using exist info
 		boolean loginState = false;
 		User tempUser = new User();

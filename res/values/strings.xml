@@ -14,6 +14,8 @@
     <string name="loading">搜索中...</string>
     <string name="takePicAgain">重新 \n拍照</string>
     <string name="scanning">图片扫描中...</string>
+    <string name="logining">登录中...</string>
+    <string name="loginError">邮箱或密码有误，请重试</string>
     <string name="title_activity_camera_result">CameraResultActivity</string>
     <string name="title_activity_tess_result">TessResultActivity</string>
     <string name="title_activity_food_detail">FoodDetailActivity</string>

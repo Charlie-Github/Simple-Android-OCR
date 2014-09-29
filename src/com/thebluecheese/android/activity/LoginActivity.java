@@ -3,6 +3,7 @@ package com.thebluecheese.android.activity;
 
 import java.util.HashMap;
 
+import cn.sharesdk.facebook.Facebook;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.utils.UIHandler;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,29 +84,59 @@ public class LoginActivity extends Activity implements Callback{
 	
 	public class thirdPartyClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
+			Platform fc = new Facebook(context);
+			authorize(fc);
+			fc.getDb().getUserId();
+			String openId = fc.getDb().getUserId(); // 获取用户在此平台的ID
+			String nickname = fc.getDb().getUserName();//.get("nickname"); // 获取用户昵称
+			String userIcon = fc.getDb().getUserIcon();//URL
 			
-			authorize(new SinaWeibo(context));
-			
+			Log.i(TAG, "login userInfo: "+ nickname);
+			Log.i(TAG, "login userInfo: "+ userIcon);
 		}
 	}
 	
 	private void authorize(Platform plat) {
 		if (plat == null) {
-			
+			Log.e(TAG,"login dose not support: "+ plat.getName());
 			return;
 		}
 		
 		if(plat.isValid()) {
 			String userId = plat.getDb().getUserId();
 			if (!TextUtils.isEmpty(userId)) {
-				UIHandler.sendEmptyMessage(1, this);
+				UIHandler.sendEmptyMessage(MSG_USERID_FOUND, this);
 				login(plat.getName(), userId, null);
 				return;
 			}
 		}
-		//plat.setPlatformActionListener(this);
-		plat.SSOSetting(false);
+		//plat.setPlatformActionListener((PlatformActionListener) this);
+		plat.SSOSetting(true);
 		plat.showUser(null);
+		
+	}
+	
+	public void onComplete(Platform platform, int action,
+			HashMap<String, Object> res) {
+		if (action == Platform.ACTION_USER_INFOR) {
+			UIHandler.sendEmptyMessage(MSG_AUTH_COMPLETE, this);
+			login(platform.getName(), platform.getDb().getUserId(), res);
+		}
+		Log.i(TAG, "login onComplete: "+ res);
+	}
+	
+	public void onError(Platform platform, int action, Throwable t) {
+		if (action == Platform.ACTION_USER_INFOR) {
+			UIHandler.sendEmptyMessage(MSG_AUTH_ERROR, this);
+		}
+		Log.i(TAG, "login onError: "+ t);
+		
+	}
+	
+	public void onCancel(Platform platform, int action) {
+		if (action == Platform.ACTION_USER_INFOR) {
+			UIHandler.sendEmptyMessage(MSG_AUTH_CANCEL, this);
+		}
 	}
 	
 	private void login(String plat, String userId, HashMap<String, Object> userInfo) {
@@ -119,30 +151,28 @@ public class LoginActivity extends Activity implements Callback{
 		switch(msg.what) {
 		case MSG_USERID_FOUND: {
 			Toast.makeText(this, "userid_found", Toast.LENGTH_SHORT).show();
+			Log.i(TAG, "login message: "+ "userid_found");
 		}
 		break;
-		case MSG_LOGIN: {
-			
-			String text = getString(R.string.logining, msg.obj);
-			Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-			
-//			Builder builder = new Builder(this);
-//			builder.setTitle(R.string.if_register_needed);
-//			builder.setMessage(R.string.after_auth);
-//			builder.setPositiveButton(R.string.ok, null);
-//			builder.create().show();
+		case MSG_LOGIN: {			
+			//String text = getString(R.string.logining, msg.obj);
+			//Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+			Log.i(TAG, "login message: "+ "login ing");
 		}
 		break;
 		case MSG_AUTH_CANCEL: {
 			Toast.makeText(this, "auth_cancel", Toast.LENGTH_SHORT).show();
+			Log.i(TAG, "login message: "+ "auth_cancel");
 		}
 		break;
 		case MSG_AUTH_ERROR: {
 			Toast.makeText(this, "auth_error", Toast.LENGTH_SHORT).show();
+			Log.i(TAG, "login message: "+ "auth_error");
 		}
 		break;
 		case MSG_AUTH_COMPLETE: {
 			Toast.makeText(this, "auth_complete", Toast.LENGTH_SHORT).show();
+			Log.i(TAG, "login message: "+ "auth_complete");
 		}
 		break;
 	}

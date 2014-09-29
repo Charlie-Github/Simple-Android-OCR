@@ -27,5 +27,12 @@
         AppId="wx4868b35061f87885"
         BypassApproval="true"
         Enable="true" />
+    
+    <Facebook
+        Id="8"
+        SortId="8"
+        ConsumerKey="694448720641239"
+        ConsumerSecret="f95eeb2bc27198f511d426c9bf897522"
+        Enable="true" />
 	
 </DevInfor>

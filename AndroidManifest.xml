@@ -126,6 +126,13 @@
         
         <!-- Share SDK -->
         <activity
+			android:name="cn.sharesdk.framework.AuthorizeActivity"
+			android:configChanges="keyboardHidden|orientation"
+			android:screenOrientation="portrait"  > 
+		<!-- NoTitle表示不显示授权页面的标题boolean值，为true表示不显示，否则为显示，默认为显示-->
+		<!-- <meta-data  android:name="NoTitle" android:value="true" /> -->
+		</activity>
+        <activity
             android:name="cn.sharesdk.framework.ShareSDKUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
@@ -139,6 +146,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" >

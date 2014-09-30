@@ -77,8 +77,8 @@ public class RegisterHelper  implements Runnable{
 	        
 	    } 
 	    
-        //JsonParser jp = new JsonParser();
-        //tempUser = jp.parseUser(responsText);
+        JsonParser jp = new JsonParser();
+        tempUser = jp.parseUser(responsText);
         
         return tempUser;
 	} 

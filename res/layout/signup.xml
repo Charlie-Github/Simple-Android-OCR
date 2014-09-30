@@ -1,0 +1,65 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loginView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.thebluecheese.android.activity.LoginActivity" >
+
+    <ImageView
+        android:id="@+id/imageViewLogin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/login" />
+
+    <TextView
+        android:id="@+id/signupErrortext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textEmailsignup"
+        android:layout_alignRight="@+id/textPwdsignup"
+        android:layout_centerVertical="true"
+        android:background="#ff36BBE0"
+        android:text="注册"
+        android:textColor="#ffffffff" />
+
+    <EditText
+        android:id="@+id/textPwdsignup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/submitButton"
+        android:layout_alignRight="@+id/textEmailsignup"
+        android:layout_marginBottom="17dp"
+        android:ems="10"
+        android:hint="密码"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/textNamesignup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textEmailsignup"
+        android:layout_alignLeft="@+id/textEmailsignup"
+        android:layout_marginBottom="24dp"
+        android:ems="10"
+        android:hint="用户名" />
+
+    <EditText
+        android:id="@+id/textEmailsignup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textPwdsignup"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="17dp"
+        android:ems="10"
+        android:hint="邮箱"
+        android:inputType="textEmailAddress" />
+
+</RelativeLayout>

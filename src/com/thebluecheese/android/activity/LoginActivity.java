@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -93,18 +94,10 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 			editor.putString("name", "");
 			editor.putString("uid", "");			
 			editor.commit();
-
-			//Post login request		
-			RegisterHelper rh = new RegisterHelper("gcte@gmail.com" , "","test");
-			Thread postThread = new Thread(rh);
-			postThread.start();			
-			try {
-				//waiting for get response
-				postThread.join();
-			} catch (InterruptedException e) {
-				Log.e(TAG, "Exception" + e);			
-			}		
-			rh.getUser();
+			
+			//start signup
+			Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+			startActivity(intent);
 		}
 	}
 	

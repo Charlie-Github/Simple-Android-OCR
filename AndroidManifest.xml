@@ -153,6 +153,10 @@
             android:name=".SignupActivity"
             android:label="@string/title_activity_signup" >
         </activity>
+        <activity
+            android:name=".FunctionsActivity"
+            android:label="@string/title_activity_functions" >
+        </activity>
     </application>
 
 </manifest>

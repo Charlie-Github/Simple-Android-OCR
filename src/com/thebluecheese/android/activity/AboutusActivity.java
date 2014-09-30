@@ -40,7 +40,8 @@ public class AboutusActivity extends Activity {
 			
 			// return back to this activity
 			Log.v(TAG, "Starting Camera Result Activity");
-			Intent intent = new Intent(AboutusActivity.this, LoginActivity.class);
+			//Intent intent = new Intent(AboutusActivity.this, LoginActivity.class);
+			Intent intent = new Intent(AboutusActivity.this, FunctionsActivity.class);
 			startActivity(intent);
 			
 			

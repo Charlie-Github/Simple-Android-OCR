@@ -6,6 +6,8 @@ public class User {
 	public String _email;
 	public String _name;
 	public String _log;
+	public String _gender;
+	public int _age;
 	
 	public User(){
 		_selfie = "";

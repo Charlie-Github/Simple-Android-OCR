@@ -3,6 +3,11 @@ package com.thebluecheese.android.activity;
 
 import java.util.HashMap;
 
+import com.thebluecheese.android.basic.User;
+import com.thebluecheese.android.network.LoginHelper;
+import com.thebluecheese.android.network.RegisterHelper;
+import com.thebluecheese.android.network.thirdPartyUserParser;
+
 import cn.sharesdk.facebook.Facebook;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
@@ -12,6 +17,7 @@ import cn.sharesdk.tencent.qzone.QZone;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,13 +28,14 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class LoginActivity extends Activity implements Callback{
+public class LoginActivity extends Activity implements Callback, PlatformActionListener {
 
 	String TAG = "BlueCheese";
 	Button loginButton;
@@ -47,7 +54,8 @@ public class LoginActivity extends Activity implements Callback{
 	private static final int MSG_AUTH_CANCEL = 3;
 	private static final int MSG_AUTH_ERROR= 4;
 	private static final int MSG_AUTH_COMPLETE = 5;
-	
+	Platform plt;
+	User user;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +68,16 @@ public class LoginActivity extends Activity implements Callback{
 		errorText = (TextView)findViewById(R.id.loginErrortext);
 		
 		loginButton = (Button)findViewById(R.id.loginButton);
+		
 		signUpButton = (Button)findViewById(R.id.signUpButton);
 		signUpButton.setOnClickListener(new signupClickHandler());
+		
 		thirdPartyButton = (Button)findViewById(R.id.thirdButton);
 		thirdPartyButton.setOnClickListener(new thirdPartyClickHandler());
+		
+		
+		plt = new Facebook(context);
+		user = new User();
 		
 		LoginActivityAsyncTask lhelper = new LoginActivityAsyncTask(emailText,pwdText,errorText,loginButton,progressDialog,context);
 		lhelper.execute();
@@ -78,21 +92,26 @@ public class LoginActivity extends Activity implements Callback{
 			editor.putString("pwd", "");
 			editor.putString("name", "");
 			editor.putString("uid", "");			
-			editor.commit();		
+			editor.commit();
+
+			//Post login request		
+			RegisterHelper rh = new RegisterHelper("gcte@gmail.com" , "","test");
+			Thread postThread = new Thread(rh);
+			postThread.start();			
+			try {
+				//waiting for get response
+				postThread.join();
+			} catch (InterruptedException e) {
+				Log.e(TAG, "Exception" + e);			
+			}		
+			rh.getUser();
 		}
 	}
 	
 	public class thirdPartyClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
-			Platform fc = new Facebook(context);
-			authorize(fc);
-			fc.getDb().getUserId();
-			String openId = fc.getDb().getUserId(); // 获取用户在此平台的ID
-			String nickname = fc.getDb().getUserName();//.get("nickname"); // 获取用户昵称
-			String userIcon = fc.getDb().getUserIcon();//URL
 			
-			Log.i(TAG, "login userInfo: "+ nickname);
-			Log.i(TAG, "login userInfo: "+ userIcon);
+			authorize(plt);			
 		}
 	}
 	
@@ -110,19 +129,35 @@ public class LoginActivity extends Activity implements Callback{
 				return;
 			}
 		}
-		//plat.setPlatformActionListener((PlatformActionListener) this);
+		plat.setPlatformActionListener(this);
 		plat.SSOSetting(true);
 		plat.showUser(null);
 		
+
+		
 	}
 	
-	public void onComplete(Platform platform, int action,
-			HashMap<String, Object> res) {
+	public void onComplete(Platform platform, int action,HashMap<String, Object> res) {
 		if (action == Platform.ACTION_USER_INFOR) {
 			UIHandler.sendEmptyMessage(MSG_AUTH_COMPLETE, this);
 			login(platform.getName(), platform.getDb().getUserId(), res);
 		}
-		Log.i(TAG, "login onComplete: "+ res);
+		user = thirdPartyUserParser.parseFacebook(res);
+		
+		
+		// treat this as first time login user
+		SharedPreferences sharedPreferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);		
+		Editor editor = sharedPreferences.edit();//获取编辑器
+		editor.putString("email", "");
+		editor.putString("pwd", "");
+		editor.putString("name", user._name);
+		editor.putString("uid", user._uid+"");
+		editor.putString("selfie", user._selfie);
+		editor.putString("gender", user._gender);
+		editor.putString("age", user._age+"");
+		editor.commit();
+		
+		Log.i(TAG, "login onComplete res: "+ res);
 	}
 	
 	public void onError(Platform platform, int action, Throwable t) {
@@ -145,7 +180,8 @@ public class LoginActivity extends Activity implements Callback{
 		msg.obj = plat;
 		UIHandler.sendMessage(msg, this);
 	}
-
+	
+	
 	@Override
 	public boolean handleMessage(Message msg) {
 		switch(msg.what) {
@@ -156,8 +192,9 @@ public class LoginActivity extends Activity implements Callback{
 		break;
 		case MSG_LOGIN: {			
 			//String text = getString(R.string.logining, msg.obj);
-			//Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Login...", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "login ing");
+			
 		}
 		break;
 		case MSG_AUTH_CANCEL: {
@@ -177,8 +214,6 @@ public class LoginActivity extends Activity implements Callback{
 		break;
 	}
 	return false;
-	}
-
-	
+	}	
 	
 }

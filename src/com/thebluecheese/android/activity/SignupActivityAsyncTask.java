@@ -178,19 +178,8 @@ public class SignupActivityAsyncTask extends AsyncTask<String, Integer, String> 
 		tempUser = rh.getUser();		
 		
 		//check login status
-		if(tempUser._log.equals("register user succeed")){
-			//user verified by server
-			Editor editor = sharedPreferences.edit();//获取编辑器
-			editor.putString("email", tempUser._email);
-			editor.putString("pwd", password);
-			editor.putString("name", tempUser._name);
-			editor.putString("uid", tempUser._uid+"");
-			editor.putString("selfie", tempUser._selfie);
-			editor.putString("gender", tempUser._gender);
-			editor.putString("age", tempUser._age+"");
-			editor.commit();
-			loginState = true;
-			
+		if(tempUser._log.equals("register user succeed")){			
+			loginState = true;			
 		}else{
 			//login failed
 			loginState = false;

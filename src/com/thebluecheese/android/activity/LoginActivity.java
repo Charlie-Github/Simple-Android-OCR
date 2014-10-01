@@ -136,9 +136,12 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 			login(platform.getName(), platform.getDb().getUserId(), res);
 			
 			//parse third party user info from "res"
-			user = thirdPartyUserParser.parseFacebook(res);
-			
+			user = thirdPartyUserParser.parseFacebook(res);			
 			storeUser(user);
+			
+			//triger blue cheese user system
+			LoginThirdActivityAsyncTask lhelper = new LoginThirdActivityAsyncTask(progressDialog,context);
+			lhelper.execute();
 		}
 		
 		Log.i(TAG, "login onComplete res: "+ res.get("name").toString());
@@ -155,8 +158,8 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 		// treat this as first time login user
 		SharedPreferences sharedPreferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);		
 		Editor editor = sharedPreferences.edit();//获取编辑器
-		editor.putString("email", "");
-		editor.putString("pwd", "");
+		editor.putString("email", user._email);
+		editor.putString("pwd", user._pwd);
 		editor.putString("name", user._name);
 		editor.putString("uid", user._uid+"");
 		editor.putString("selfie", user._selfie);

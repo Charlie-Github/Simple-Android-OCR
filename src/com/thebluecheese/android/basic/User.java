@@ -8,6 +8,7 @@ public class User {
 	public String _log;
 	public String _gender;
 	public String _age;
+	public String _pwd;
 	
 	public User(){
 		_selfie = "";

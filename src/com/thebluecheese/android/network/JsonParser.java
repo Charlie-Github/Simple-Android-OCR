@@ -118,7 +118,7 @@ public class JsonParser {
             	JSONObject jsonObj = new JSONObject(jsonStr);
             	String status = jsonObj.getString("log");
                 
-                if(status.equals("login succeed")){
+                if(status != null){
                 	user._log = status;
 	                JSONObject result = jsonObj.getJSONObject("result");
 	                user._selfie = result.getString("selfie");
@@ -128,7 +128,7 @@ public class JsonParser {
                 }
             
             } catch (JSONException e) {
-                Log.e(TAG,"Exception on Json parser user: "+e.getMessage());
+                Log.i(TAG,"Exception on Json parser user: " + e.getMessage());
             }
         }
 		return user;

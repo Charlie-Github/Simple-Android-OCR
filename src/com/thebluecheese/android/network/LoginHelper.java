@@ -54,7 +54,6 @@ public class LoginHelper  implements Runnable{
 	        StringEntity se = new StringEntity(json.toString());
 	        se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 	        httppost.setEntity(se);
-	        Log.i(TAG, httppost.toString());	
 	        // Execute HTTP Post Request
 	        HttpResponse response = httpclient.execute(httppost);
 	        

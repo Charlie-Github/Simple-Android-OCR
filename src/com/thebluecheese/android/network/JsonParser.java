@@ -69,17 +69,19 @@ public class JsonParser {
                 JSONObject jsonObj = new JSONObject(jsonStr); 
                 JSONArray results = jsonObj.getJSONArray("result");                
                 
-                // looping through "result"
-                for (int i = 0; i < results.length(); i++) {
-                	
-                	FoodReview tempReview = new FoodReview();
-                    JSONObject review = results.getJSONObject(i);
-                    tempReview._fid = review.getInt("fid");
-                    tempReview._comments = review.getString("comments");                     
-                    JSONObject review_creater = review.getJSONObject("review_creater");                   	
-                    tempReview. _review_creater= review_creater.getString("name"); 
-                    
-                    foodReviews.add(tempReview);             
+                if(results.length() > 0){
+	                // looping through "result"
+	                for (int i = 0; i < results.length(); i++) {
+	                	
+	                	FoodReview tempReview = new FoodReview();
+	                    JSONObject review = results.getJSONObject(i);
+	                    tempReview._fid = review.getInt("fid");
+	                    tempReview._comments = review.getString("comments");                     
+	                    JSONObject review_creater = review.getJSONObject("review_creater");                   	
+	                    tempReview. _review_creater= review_creater.getString("name"); 
+	                    
+	                    foodReviews.add(tempReview);             
+	                }
                 }
             } catch (JSONException e) {
                 Log.e(TAG,"Exception on Json parser review: "+e.getMessage());
@@ -112,13 +114,18 @@ public class JsonParser {
 		if (jsonStr != null) {
 			
         	try {
+        		
             	JSONObject jsonObj = new JSONObject(jsonStr);
-                user._log = jsonObj.getString("log");                
-                JSONObject result = jsonObj.getJSONObject("result");
-                user._selfie = result.getString("selfie");
-                user._uid = result.getInt("uid");
-                user._name = result.getString("name");
-                user._email = result.getString("email");            
+            	String status = jsonObj.getString("log");
+                
+                if(status.equals("login succeed")){
+                	user._log = status;
+	                JSONObject result = jsonObj.getJSONObject("result");
+	                user._selfie = result.getString("selfie");
+	                user._uid = result.getInt("uid");
+	                user._name = result.getString("name");
+	                user._email = result.getString("email");
+                }
             
             } catch (JSONException e) {
                 Log.e(TAG,"Exception on Json parser user: "+e.getMessage());

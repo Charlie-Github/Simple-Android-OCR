@@ -7,7 +7,7 @@ public class User {
 	public String _name;
 	public String _log;
 	public String _gender;
-	public int _age;
+	public String _age;
 	
 	public User(){
 		_selfie = "";
@@ -15,5 +15,6 @@ public class User {
 		_email = "";
 		_name = "";
 		_log = "";
+		_age = "";
 	}
 }

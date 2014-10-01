@@ -16,7 +16,7 @@ public class thirdPartyUserParser{
 		user._selfie = (String) data.get("url");
 		
 		HashMap<String, Object> age_range =(HashMap<String,Object>)res.get("age_range");	
-		user._age = Integer.parseInt((String)age_range.get("min"));
+		user._age = age_range.get("min").toString();
 		
 		return user;
 	}

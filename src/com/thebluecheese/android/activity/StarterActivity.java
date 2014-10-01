@@ -27,7 +27,7 @@ public class StarterActivity extends Activity {
 		/*=====================Test area below===========================*/
 		
 		ShareSDK.initSDK(this);
-		
+		ShareSDK.removeCookieOnAuthorize(true); // in order to allow another user login
 		/*=======================Test Ends================================*/		
 		_button = (Button) findViewById(R.id.button);
 		_button.setOnClickListener(new ButtonClickHandler());

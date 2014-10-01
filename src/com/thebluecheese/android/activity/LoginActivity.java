@@ -4,20 +4,14 @@ package com.thebluecheese.android.activity;
 import java.util.HashMap;
 
 import com.thebluecheese.android.basic.User;
-import com.thebluecheese.android.network.LoginHelper;
-import com.thebluecheese.android.network.RegisterHelper;
 import com.thebluecheese.android.network.thirdPartyUserParser;
 
 import cn.sharesdk.facebook.Facebook;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.framework.utils.UIHandler;
-import cn.sharesdk.sina.weibo.SinaWeibo;
-import cn.sharesdk.tencent.qzone.QZone;
-import cn.sharesdk.wechat.friends.Wechat;
-import cn.sharesdk.wechat.moments.WechatMoments;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +23,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -47,16 +40,17 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 	TextView errorText;
 	Context context;
 	ProgressDialog progressDialog;
-	
+	User user;
 	String result;
 	
+	//message code for shareSDK
 	private static final int MSG_USERID_FOUND = 1;
 	private static final int MSG_LOGIN = 2;
 	private static final int MSG_AUTH_CANCEL = 3;
 	private static final int MSG_AUTH_ERROR= 4;
 	private static final int MSG_AUTH_COMPLETE = 5;
 	Platform plt;
-	User user;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +71,7 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 		thirdPartyButton.setOnClickListener(new thirdPartyClickHandler());
 		
 		
-		plt = new Facebook(context);
+		plt = ShareSDK.getPlatform(this,Facebook.NAME);//new Facebook(context);
 		user = new User();
 		
 		LoginActivityAsyncTask lhelper = new LoginActivityAsyncTask(emailText,pwdText,errorText,loginButton,progressDialog,context);
@@ -86,7 +80,9 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 	}
 	
 	public class signupClickHandler implements View.OnClickListener {
-		public void onClick(View view) {			
+		public void onClick(View view) {
+			// sign up button
+			/*
 			SharedPreferences sharedPreferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
 			Editor editor = sharedPreferences.edit();
 			editor.putString("email", "");
@@ -94,8 +90,9 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 			editor.putString("name", "");
 			editor.putString("uid", "");			
 			editor.commit();
+			*/
 			
-			//start signup
+			//start sign up
 			Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
 			startActivity(intent);
 		}
@@ -103,14 +100,15 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 	
 	public class thirdPartyClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
-			
+			//third party button
 			authorize(plt);			
 		}
 	}
 	
 	private void authorize(Platform plat) {
+				
 		if (plat == null) {
-			Log.e(TAG,"login dose not support: "+ plat.getName());
+			Log.e(TAG,"third party login is null.");
 			return;
 		}
 		
@@ -121,12 +119,14 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 				login(plat.getName(), userId, null);
 				return;
 			}
+			
 		}
-		plat.setPlatformActionListener(this);
-		plat.SSOSetting(true);
-		plat.showUser(null);
-		
 
+		
+		plat.setPlatformActionListener(this);
+		//plat.SSOSetting(true); // true表示不使用SSO方式授权
+		plat.showUser(null);
+		//plat.authorize();
 		
 	}
 	
@@ -134,10 +134,24 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 		if (action == Platform.ACTION_USER_INFOR) {
 			UIHandler.sendEmptyMessage(MSG_AUTH_COMPLETE, this);
 			login(platform.getName(), platform.getDb().getUserId(), res);
+			
+			//parse third party user info from "res"
+			user = thirdPartyUserParser.parseFacebook(res);
+			
+			storeUser(user);
 		}
-		user = thirdPartyUserParser.parseFacebook(res);
 		
-		
+		Log.i(TAG, "login onComplete res: "+ res.get("name").toString());
+	}
+	
+	private void login(String plat, String userId, HashMap<String, Object> userInfo) {
+		Message msg = new Message();
+		msg.what = MSG_LOGIN;
+		msg.obj = plat;
+		UIHandler.sendMessage(msg, this);
+	}
+	
+	public void storeUser(User user){
 		// treat this as first time login user
 		SharedPreferences sharedPreferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);		
 		Editor editor = sharedPreferences.edit();//获取编辑器
@@ -147,61 +161,50 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 		editor.putString("uid", user._uid+"");
 		editor.putString("selfie", user._selfie);
 		editor.putString("gender", user._gender);
-		editor.putString("age", user._age+"");
+		editor.putString("age", user._age);
 		editor.commit();
-		
-		Log.i(TAG, "login onComplete res: "+ res);
 	}
 	
 	public void onError(Platform platform, int action, Throwable t) {
 		if (action == Platform.ACTION_USER_INFOR) {
 			UIHandler.sendEmptyMessage(MSG_AUTH_ERROR, this);
 		}
-		Log.i(TAG, "login onError: "+ t);
-		
+		Log.i(TAG, "login onError: "+ t);		
 	}
 	
 	public void onCancel(Platform platform, int action) {
 		if (action == Platform.ACTION_USER_INFOR) {
 			UIHandler.sendEmptyMessage(MSG_AUTH_CANCEL, this);
 		}
-	}
-	
-	private void login(String plat, String userId, HashMap<String, Object> userInfo) {
-		Message msg = new Message();
-		msg.what = 2;
-		msg.obj = plat;
-		UIHandler.sendMessage(msg, this);
-	}
-	
+	}	
 	
 	@Override
 	public boolean handleMessage(Message msg) {
 		switch(msg.what) {
 		case MSG_USERID_FOUND: {
-			Toast.makeText(this, "userid_found", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "User found", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "userid_found");
 		}
 		break;
 		case MSG_LOGIN: {			
 			//String text = getString(R.string.logining, msg.obj);
-			Toast.makeText(this, "Login...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Login", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "login ing");
 			
 		}
 		break;
 		case MSG_AUTH_CANCEL: {
-			Toast.makeText(this, "auth_cancel", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Auth cancel", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "auth_cancel");
 		}
 		break;
 		case MSG_AUTH_ERROR: {
-			Toast.makeText(this, "auth_error", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Auth error", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "auth_error");
 		}
 		break;
 		case MSG_AUTH_COMPLETE: {
-			Toast.makeText(this, "auth_complete", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Auth complete", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "auth_complete");
 		}
 		break;

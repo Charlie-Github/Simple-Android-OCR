@@ -72,14 +72,14 @@ public class LoginHelper  implements Runnable{
 	
 	@Override
 	public void run() {
-		user = loginServer(_email,_pwd);
-		//loginV2();
+		//user = loginServer(_email,_pwd);
+		loginV2();
 	}
 	
 	public User loginServer(String loginemail, String loginpwd) {
 		User tempUser = new User();
 	    // Create a new HttpClient and Post Header
-	    HttpClient httpclient = new DefaultHttpClient();
+		HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = new HttpPost(userServerAddress);
 	    JSONObject json = new JSONObject();		    
 	    
@@ -134,7 +134,7 @@ public class LoginHelper  implements Runnable{
 			if(account == null) {
 				Log.i(TAG,"账号或密码错误，请重试");
 			} else {
-				Log.i(TAG,"登陆成功，欢迎进入蓝芝士的世界");
+				Log.i(TAG,"登陆成功，欢迎进入蓝芝士的世界,"+account.toString());
 				//currentAccount = account;
 				
 			}

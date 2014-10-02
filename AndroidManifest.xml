@@ -87,7 +87,7 @@
         android:targetSdkVersion="20" />
 
     <application
-        android:debuggable="false"
+        android:debuggable="true"
         android:icon="@drawable/ic_launcher_cheese"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
@@ -156,6 +156,10 @@
         <activity
             android:name=".FunctionsActivity"
             android:label="@string/title_activity_functions" >
+        </activity>
+        <activity
+            android:name=".UserCenterActivity"
+            android:label="@string/title_activity_user_center" >
         </activity>
     </application>
 

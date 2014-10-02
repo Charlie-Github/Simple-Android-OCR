@@ -7,7 +7,7 @@ public class Food {
 	public String _tags;
 	public String _title;
 	public String _name;
-	public int _avg_rate;
+	public Double _avg_rate;
 	public int _food_creater;
 	public String _description;
 	public ArrayList<FoodPhoto> _photos;

@@ -63,6 +63,7 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 		errorText = (TextView)findViewById(R.id.loginErrortext);
 		
 		loginButton = (Button)findViewById(R.id.loginButton);
+		loginButton.setOnClickListener(new loginClickHandler());
 		
 		signUpButton = (Button)findViewById(R.id.signUpButton);
 		signUpButton.setOnClickListener(new signupClickHandler());
@@ -74,24 +75,20 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 		plt = ShareSDK.getPlatform(this,Facebook.NAME);//new Facebook(context);
 		user = new User();
 		
-		LoginActivityAsyncTask lhelper = new LoginActivityAsyncTask(emailText,pwdText,errorText,loginButton,progressDialog,context);
+		LoginTryAsyncTask lhelper = new LoginTryAsyncTask(context,progressDialog);
 		lhelper.execute();
 		
 	}
 	
+	public class loginClickHandler implements View.OnClickListener {
+		public void onClick(View view) {
+			LoginActivityAsyncTask lhelper = new LoginActivityAsyncTask(emailText,pwdText,errorText,loginButton,progressDialog,context);
+			lhelper.execute();
+		}
+	}
+	
 	public class signupClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
-			// sign up button
-			/*
-			SharedPreferences sharedPreferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-			Editor editor = sharedPreferences.edit();
-			editor.putString("email", "");
-			editor.putString("pwd", "");
-			editor.putString("name", "");
-			editor.putString("uid", "");			
-			editor.commit();
-			*/
-			
 			//start sign up
 			Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
 			startActivity(intent);
@@ -121,10 +118,9 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 			}
 			
 		}
-
 		
 		plat.setPlatformActionListener(this);
-		//plat.SSOSetting(true); // true表示不使用SSO方式授权
+		plat.SSOSetting(true); // true表示不使用SSO方式授权
 		plat.showUser(null);
 		//plat.authorize();
 		
@@ -139,8 +135,8 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 			user = thirdPartyUserParser.parseFacebook(res);			
 			storeUser(user);
 			
-			//triger blue cheese user system
-			LoginThirdActivityAsyncTask lhelper = new LoginThirdActivityAsyncTask(progressDialog,context);
+			//Tiger blue cheese user system
+			LoginThirdpartyAsyncTask lhelper = new LoginThirdpartyAsyncTask(progressDialog,context);
 			lhelper.execute();
 		}
 		
@@ -157,7 +153,7 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 	public void storeUser(User user){
 		// treat this as first time login user
 		SharedPreferences sharedPreferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);		
-		Editor editor = sharedPreferences.edit();//获取编辑器
+		Editor editor = sharedPreferences.edit();
 		editor.putString("email", user._email);
 		editor.putString("pwd", user._pwd);
 		editor.putString("name", user._name);
@@ -185,24 +181,24 @@ public class LoginActivity extends Activity implements Callback, PlatformActionL
 	public boolean handleMessage(Message msg) {
 		switch(msg.what) {
 		case MSG_USERID_FOUND: {
-			Toast.makeText(this, "User found", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "User found", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "userid_found");
 		}
 		break;
 		case MSG_LOGIN: {			
 			//String text = getString(R.string.logining, msg.obj);
-			Toast.makeText(this, "Login", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Login", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "login ing");
 			
 		}
 		break;
 		case MSG_AUTH_CANCEL: {
-			Toast.makeText(this, "Auth cancel", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Auth cancel", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "auth_cancel");
 		}
 		break;
 		case MSG_AUTH_ERROR: {
-			Toast.makeText(this, "Auth error", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Auth error", Toast.LENGTH_SHORT).show();
 			Log.i(TAG, "login message: "+ "auth_error");
 		}
 		break;

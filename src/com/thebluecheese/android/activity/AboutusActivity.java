@@ -54,8 +54,6 @@ public class AboutusActivity extends Activity implements PlatformActionListener{
 	public class ButtonClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
 			
-			// return back to this activity
-			Log.v(TAG, "Starting Camera Result Activity");
 			Intent intent = new Intent(AboutusActivity.this, LoginActivity.class); //login activity
 			//Intent intent = new Intent(AboutusActivity.this, FunctionsActivity.class);// functions activity
 			startActivity(intent);

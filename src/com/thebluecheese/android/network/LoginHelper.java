@@ -1,6 +1,6 @@
 package com.thebluecheese.android.network;
 
-import java.io.IOException;
+
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -10,24 +10,60 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
+
 import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.edible.entity.Account;
+import com.edible.service.AccountService;
+import com.edible.service.DictionaryService;
+import com.edible.service.DiscountService;
+import com.edible.service.FoodService;
+import com.edible.service.ImageService;
+import com.edible.service.RestaurantService;
+import com.edible.service.ReviewService;
+import com.edible.service.UserService;
+import com.edible.service.impl.AccountServiceImpl;
+import com.edible.service.impl.DictionaryServiceImpl;
+import com.edible.service.impl.FoodServiceImpl;
+import com.edible.service.impl.ImageServiceImpl;
+import com.edible.service.impl.ReviewServiceImpl;
+import com.edible.service.impl.UserServiceImpl;
 import com.thebluecheese.android.basic.User;
 
 public class LoginHelper  implements Runnable{
-	static String TAG = "BlueCheese";
-	static String userServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/user";
-	static String responsText;
+	String TAG = "BlueCheese";
+	String userServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/user";
+	String responsText;
 	String _email;
 	String _pwd;
 	User user;
 	
+	Account currentAccount;
+	AccountService accountService;
+	UserService userService;
+	DictionaryService dictionaryService;
+	FoodService foodService;
+	ReviewService reviewService;
+	ImageService imageService;
+    RestaurantService restaurantService;
+    DiscountService discountService;
+	
 	public LoginHelper(String loginemail, String loginpwd){
 		_email = loginemail;
 		_pwd = loginpwd;
+		user = new User();
+		//-------------------------
+				
+			    
+			    accountService = new AccountServiceImpl();
+				userService = new UserServiceImpl();
+				dictionaryService = new DictionaryServiceImpl();
+				foodService = new FoodServiceImpl();
+				reviewService = new ReviewServiceImpl();
+				imageService = new ImageServiceImpl();
+		
 	}
 	
 	public User getUser(){
@@ -36,7 +72,8 @@ public class LoginHelper  implements Runnable{
 	
 	@Override
 	public void run() {
-		user = loginServer(_email,_pwd);		
+		user = loginServer(_email,_pwd);
+		//loginV2();
 	}
 	
 	public User loginServer(String loginemail, String loginpwd) {
@@ -77,5 +114,34 @@ public class LoginHelper  implements Runnable{
         
         return tempUser;
 	} 
+	
+	public void loginV2(){
+
+	    
+		
+		try {
+			/**
+			 * 成功案例:登陆成功，并返回账号信息
+			 * 失败案例:账户或密码错误,返回提示信息
+			 * 错误案例:提示出错信息
+			 */
+			//从用户界面获取用户输入的邮件和密码
+			String email = "bluecheese@edibleinnovationsllc.com";
+			String password = "edible";
+			
+			Account account = accountService.signIn(email, password);
+			Log.i(TAG,"V2");
+			if(account == null) {
+				Log.i(TAG,"账号或密码错误，请重试");
+			} else {
+				Log.i(TAG,"登陆成功，欢迎进入蓝芝士的世界");
+				//currentAccount = account;
+				
+			}
+		} catch(Exception e) {
+			Log.i(TAG,"系统错误，请稍后再试"+e);
+			//e.printStackTrace();
+		}
+	}
 
 }

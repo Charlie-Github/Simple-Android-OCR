@@ -12,21 +12,20 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class LoginThirdActivityAsyncTask extends AsyncTask<String, Integer, String> {
+public class LoginThirdpartyAsyncTask extends AsyncTask<String, Integer, String> {
 	ProgressDialog _progressDialog;
 	Context _context;
 	String TAG = "BlueCheese";
 	
 	String userServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/user";
 	
-	public LoginThirdActivityAsyncTask(ProgressDialog pd,Context ct){
+	public LoginThirdpartyAsyncTask(ProgressDialog pd,Context ct){
 		_progressDialog = pd;
 		_context = ct;
 	}
 
 	@Override
-	protected String doInBackground(String... params) {
-		
+	protected String doInBackground(String... params) {		
 		
 		if(tryLogin()||login()){
 			Intent intent = new Intent(_context, CameraResultActivity.class);
@@ -35,8 +34,7 @@ public class LoginThirdActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		return null;
 	}
 
-	protected void onProgressUpdate(Integer... progress) {
-		
+	protected void onProgressUpdate(Integer... progress) {	
 		
 		String loadingmessage = _context.getResources().getString(R.string.logining);		
 		_progressDialog.setMessage(loadingmessage);
@@ -46,13 +44,14 @@ public class LoginThirdActivityAsyncTask extends AsyncTask<String, Integer, Stri
 
 	
 	public boolean login(){
+		//register third party user and login
 		User tempUser = new User();
 		boolean loginState = false;
 		SharedPreferences sharedPre = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
 		String email = sharedPre.getString("email", "");
 		String password = sharedPre.getString("pwd", "");
 		String userName = sharedPre.getString("name","");
-		//post request
+		//post register request
 		RegisterHelper rh = new RegisterHelper(email,password,userName);
 		Thread postThread = new Thread(rh);
 		postThread.start();			
@@ -66,8 +65,7 @@ public class LoginThirdActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		
 		//check login status
 		if(tempUser._log.equals("register user succeed")){
-			//user sync by server
-			
+						
 			loginState = true;
 			
 		}else{
@@ -81,7 +79,7 @@ public class LoginThirdActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	
 	public boolean tryLogin(){
 		
-		//try to login server using exist info
+		//try to login server using third party user info seeking existing user
 		boolean loginState = false;
 		User tempUser = new User();
 				

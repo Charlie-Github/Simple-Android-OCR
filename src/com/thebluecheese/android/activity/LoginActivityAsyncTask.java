@@ -1,45 +1,10 @@
 package com.thebluecheese.android.activity;
 
-
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
-
-
-
-
-
-
-
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-
-
-
-
-
-
-
-
-
 import com.thebluecheese.android.basic.User;
-import com.thebluecheese.android.network.GetRunner;
-import com.thebluecheese.android.network.JsonParser;
 import com.thebluecheese.android.network.LoginHelper;
 
 import android.app.ProgressDialog;
@@ -49,7 +14,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -62,7 +26,7 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	EditText _pwdText;
 	TextView _errorText;
 	Button _loginButton;
-	protected ProgressDialog _progressDialog;
+	ProgressDialog _progressDialog;
 	
 	String userServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/user";
 	String responsText;
@@ -91,13 +55,13 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	
 	@Override
 	protected String doInBackground(String... params) {
-		// TODO Auto-generated method stub		
 		
-		// 1.try login
-		publishProgress(1);//call onProgressUpdate
-		_loginState = tryLogin();//no input args		
+		_email = _emailText.getText().toString();
+		_pwd = md5(_pwdText.getText().toString());
 		
-		if(_loginState == true){			
+		_loginState = firstTimeLogin(_email, _pwd);
+		
+		if(_loginState == true){
 			Intent intent = new Intent(_context, CameraResultActivity.class);
 			_context.startActivity(intent);
 		}
@@ -107,36 +71,18 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	
 	@Override
 	protected void onPostExecute(String Text) {
-	   // execution of result of Long time consuming operation
-		_errorText.setText("");
+	   // execution of result of Long time consuming operation		
 		_progressDialog.dismiss();
-		_loginButton.setOnClickListener(new loginClickHandler());
+		
 	 }
 	
 	protected void onProgressUpdate(Integer... progress) {
 		
 		String loadingmessage = _context.getResources().getString(R.string.logining);		
-		_errorText.setText(loadingmessage);
 		_progressDialog.setMessage(loadingmessage);
 		_progressDialog.show();	
 
     }
-	
-
-	public class loginClickHandler implements View.OnClickListener {
-		public void onClick(View view) {
-						
-			_email = _emailText.getText().toString();
-			_pwd = md5(_pwdText.getText().toString());
-			
-			_loginState = firstTimeLogin(_email, _pwd);
-			
-			if(_loginState == true){
-				Intent intent = new Intent(_context, CameraResultActivity.class);
-				_context.startActivity(intent);
-			}
-		}
-	}	
 	
 	public static String md5(String string) {
 	    byte[] hash;
@@ -163,8 +109,7 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	public boolean firstTimeLogin(String email, String password){
 		User tempUser = new User();
 		boolean loginState = false;
-		SharedPreferences sharedPreferences = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-		
+			
 		//Post login request		
 		LoginHelper lh = new LoginHelper(email , password);
 		Thread postThread = new Thread(lh);
@@ -180,55 +125,28 @@ public class LoginActivityAsyncTask extends AsyncTask<String, Integer, String> {
 		//check login log
 		if(tempUser._log.equals("login succeed")){
 			//user verified by server
-			Editor editor = sharedPreferences.edit();//获取编辑器
-			editor.putString("email", tempUser._email);
-			editor.putString("pwd", password);
-			editor.putString("name", tempUser._name);
-			editor.putString("uid", tempUser._uid+"");
-			editor.commit();
+			storeUser(tempUser);
 			loginState = true;
-			_errorText.setText("");
+			
 		}else{
 			//login failed
-			loginState = false;
-			String errormessage = _context.getResources().getString(R.string.loginError);	
-			_errorText.setText(errormessage);
+			loginState = false;			
 		}
 		Log.i(TAG, "first time login state: "+ loginState);
 		return loginState;
 	}
 	
-	public boolean tryLogin(){
-		
-		//try to login server using exist info
-		boolean loginState = false;
-		User tempUser = new User();
-				
-		SharedPreferences sharedPre = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-		String email = sharedPre.getString("email", "");
-		String password = sharedPre.getString("pwd", "");
-
-		//Post login request		
-		LoginHelper lh = new LoginHelper(email , password);
-		Thread postThread = new Thread(lh);
-		postThread.start();			
-		try {
-			//waiting for get response
-			postThread.join();
-		} catch (InterruptedException e) {
-			Log.e(TAG, "Exception" + e);			
-		}		
-		tempUser = lh.getUser();
-		
-		if(tempUser._log.equals("login succeed")){
-			//user already loged in once
-			loginState = true;
-		}else{
-			loginState = false;
-		}
-		Log.i(TAG, "try login state: "+ loginState);
-		return loginState;
-		
+	public void storeUser(User user){
+		// treat this as first time login user
+		SharedPreferences sharedPreferences = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);		
+		Editor editor = sharedPreferences.edit();
+		editor.putString("email", user._email);
+		editor.putString("pwd", user._pwd);
+		editor.putString("name", user._name);
+		editor.putString("uid", user._uid+"");
+		editor.putString("selfie", user._selfie);
+		editor.putString("gender", user._gender);
+		editor.putString("age", user._age);
+		editor.commit();
 	}
-	
 }

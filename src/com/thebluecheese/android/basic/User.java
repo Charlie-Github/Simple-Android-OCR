@@ -9,6 +9,9 @@ public class User {
 	public String _gender;
 	public String _age;
 	public String _pwd;
+	public String _region;
+	public String _flavor;
+	
 	
 	public User(){
 		_selfie = "";
@@ -17,5 +20,7 @@ public class User {
 		_name = "";
 		_log = "";
 		_age = "";
+		_region = "";
+		_flavor = "";
 	}
 }

@@ -2,6 +2,7 @@ package com.thebluecheese.android.activity;
 
 import cn.sharesdk.framework.ShareSDK;
 
+
 import com.thebluecheese.android.activity.R;
 
 import android.app.Activity;
@@ -28,6 +29,11 @@ public class StarterActivity extends Activity {
 		
 		ShareSDK.initSDK(this);
 		ShareSDK.removeCookieOnAuthorize(true); // in order to allow another user login
+		
+		
+		
+		
+		
 		/*=======================Test Ends================================*/		
 		_button = (Button) findViewById(R.id.button);
 		_button.setOnClickListener(new ButtonClickHandler());

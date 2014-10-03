@@ -24,6 +24,7 @@ import com.thebluecheese.android.network.GetRunner;
 import com.thebluecheese.android.network.JsonParser;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -36,15 +37,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
 public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, String> {
 	
 	private EditText _field_foodDetail;
 	private ImageButton _shareButton;
+	Button _moreinfoButton;
 	LinearLayout _detail_layout;
 	LinearLayout _root_view;
 	private LinearLayout _linearlayout;
+	LinearLayout _reviews_view;
 	private Context _context;
 	private String foodDetailResult;
 	private String foodReviewResult;
@@ -64,7 +68,7 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	String second_half;
 	Button moreInfo;
 	
-	public FoodDetailActivityAsyncTask(String foodTitle,EditText _field7,ImageButton shareButton,LinearLayout root_view,LinearLayout detail_layout,LinearLayout linearlayout,Context context){
+	public FoodDetailActivityAsyncTask(String foodTitle,EditText _field7,ImageButton shareButton,Button moreinfoButton,LinearLayout root_view,LinearLayout detail_layout,LinearLayout linearlayout,LinearLayout reviews_view,Context context){
 		
 		_field_foodDetail = _field7;
 		_shareButton = shareButton;
@@ -76,8 +80,9 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		_root_view = root_view;
 		_linearlayout = linearlayout;
 		_detail_layout = detail_layout;
+		_reviews_view = reviews_view;
 		moreInfo = new Button(_context);
-		
+		_moreinfoButton = moreinfoButton;
 		foodServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/food";		
 		reviewServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/review";
 		s3Address = "https://s3-us-west-2.amazonaws.com/blue-cheese-deployment/";
@@ -103,6 +108,7 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	@Override
 	protected void onPostExecute(String Text) {
 		
+		//trunk desc
 		if(foodDesc.length() > 75){
 			first_half = foodDesc.substring(0,75);
 			second_half = foodDesc.substring(75);
@@ -111,13 +117,12 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 		}
 		
 		if(second_half.length() > 1){
-			//add a button
-			
-			moreInfo.setBackgroundColor(Color.TRANSPARENT);
-			moreInfo.setGravity(Gravity.CENTER_VERTICAL);
-			moreInfo.setText("更多...");
-			moreInfo.setOnClickListener(new moreClickHandler());
-			_detail_layout.addView(moreInfo);
+			//add a button			
+			_moreinfoButton.setBackgroundColor(Color.TRANSPARENT);
+			_moreinfoButton.setGravity(Gravity.CENTER_VERTICAL);
+			_moreinfoButton.setText("更多...");
+			_moreinfoButton.setOnClickListener(new moreClickHandler());
+			//_detail_layout.addView(moreInfo);
 			_field_foodDetail.setText(first_half+"...");
 		}else{
 			_field_foodDetail.setText(first_half);
@@ -156,14 +161,31 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 			String creater = foodReviews.get(i)._review_creater;
 			String comment = foodReviews.get(i)._comments;
 			
+			SharedPreferences sharedPre = _context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+			String selfieURL = sharedPre.getString("selfie","");
+			
+			
+			LinearLayout reviewView = new LinearLayout(_context); 
+			reviewView.setOrientation(LinearLayout.HORIZONTAL);
+			
+			ImageView imageView = new ImageView(_context);
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(150, 150);
+				
+			imageView.setLayoutParams(layoutParams);
+			imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			//new DownloadImageTask(imageView).execute(selfieURL);
+			imageView.setImageResource(R.drawable.user);
+			reviewView.addView(imageView);
+			
+			
 			EditText text = new EditText(_context);
 			text.setGravity(Gravity.CENTER_VERTICAL);
 			text.setKeyListener(null);
 			text.setText(creater+": \n"+comment);
-
-			
-			//text.setBackgroundColor(Color.TRANSPARENT);			
-			_detail_layout.addView(text);					
+			text.setBackgroundColor(Color.TRANSPARENT);
+			reviewView.addView(text);			
+					
+			_reviews_view.addView(reviewView);					
 			
 		}
 		
@@ -252,15 +274,15 @@ public class FoodDetailActivityAsyncTask extends AsyncTask<String, Integer, Stri
 	public class moreClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
 			_field_foodDetail.setText(first_half+second_half);
-			moreInfo.setText("精简");
-			moreInfo.setOnClickListener(new lessClickHandler());
+			_moreinfoButton.setText("精简");
+			_moreinfoButton.setOnClickListener(new lessClickHandler());
 		}
 	}
 	public class lessClickHandler implements View.OnClickListener {
 		public void onClick(View view) {
 			_field_foodDetail.setText(first_half+"...");
-			moreInfo.setText("更多信息...");
-			moreInfo.setOnClickListener(new moreClickHandler());
+			_moreinfoButton.setText("更多信息...");
+			_moreinfoButton.setOnClickListener(new moreClickHandler());
 		}
 	}
 

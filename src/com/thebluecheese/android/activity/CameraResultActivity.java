@@ -44,7 +44,7 @@ public class CameraResultActivity extends Activity {
 	
     
     public CameraResultActivity() {
-        Log.i(TAG, "Instantiated new " + this.getClass());
+        Log.v(TAG, "Camera Result Activity ");
     }
     @Override
     public void onResume()

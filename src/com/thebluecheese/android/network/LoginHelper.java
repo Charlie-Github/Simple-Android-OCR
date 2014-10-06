@@ -72,8 +72,8 @@ public class LoginHelper  implements Runnable{
 	
 	@Override
 	public void run() {
-		user = loginServer(_email,_pwd);
-		//loginV2();
+		//user = loginServer(_email,_pwd);
+		loginV2("bluecheese@edibleinnovationsllc.com","edible");
 	}
 	
 	public User loginServer(String loginemail, String loginpwd) {
@@ -115,7 +115,7 @@ public class LoginHelper  implements Runnable{
         return tempUser;
 	} 
 	
-	public void loginV2(){
+	public void loginV2(String email,String password){
 
 	    
 		
@@ -126,11 +126,11 @@ public class LoginHelper  implements Runnable{
 			 * 错误案例:提示出错信息
 			 */
 			//从用户界面获取用户输入的邮件和密码
-			String email = "bluecheese@edibleinnovationsllc.com";
-			String password = "edible";
-			
+			//String email = "bluecheese@edibleinnovationsllc.com";
+			//String password = "edible";
+			Log.i(TAG,"V2 login: "+email+","+password);
 			Account account = accountService.signIn(email, password);
-			Log.i(TAG,"V2");
+			
 			if(account == null) {
 				Log.i(TAG,"账号或密码错误，请重试");
 			} else {

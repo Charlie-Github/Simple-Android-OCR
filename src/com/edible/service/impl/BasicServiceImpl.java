@@ -7,11 +7,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +36,8 @@ public abstract class BasicServiceImpl implements BasicService {
 	}
 	public JSONObject doGet(String url, Map<String, String> params) throws IOException, URISyntaxException, JSONException {
 		URIBuilder uriBuilder = new URIBuilder(url);
-		CloseableHttpClient httpclient =  HttpClients.createDefault();
+		//CloseableHttpClient httpclient =  HttpClients.createDefault();
+		HttpClient httpclient = new DefaultHttpClient();
 	    try {
 	    	Iterator<String> it = params.keySet().iterator();
 	    	while(it.hasNext()) {
@@ -46,13 +49,14 @@ public abstract class BasicServiceImpl implements BasicService {
 	    	HttpGet httpget = new HttpGet(uri);
 	        return new JSONObject(httpclient.execute(httpget, responseHandler));
 	    } finally {
-	        httpclient.close();
+	        //httpclient.close();
 	    }
 	}
 	
 	public JSONObject doPost(String url, Map<String, String> params) throws IOException, URISyntaxException, JSONException {
 		URIBuilder uriBuilder = new URIBuilder(url);
-		CloseableHttpClient httpclient = HttpClients.createDefault();
+		//CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpClient httpclient = new DefaultHttpClient();
 		try {
 			URI uri = uriBuilder.build();
 			HttpPost httppost = new HttpPost(uri);
@@ -62,7 +66,7 @@ public abstract class BasicServiceImpl implements BasicService {
 			httppost.setEntity(new StringEntity(entity, "UTF-8"));
 			return new JSONObject(httpclient.execute(httppost, responseHandler));
 		} finally {
-			httpclient.close();
+			//httpclient.close();
 		}
 	}
 }

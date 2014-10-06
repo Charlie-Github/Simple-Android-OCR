@@ -1,5 +1,12 @@
 package com.thebluecheese.android.activity;
 
+import com.edible.entity.Account;
+import com.edible.service.AccountService;
+import com.edible.service.DictionaryService;
+import com.edible.service.UserService;
+import com.edible.service.impl.AccountServiceImpl;
+import com.edible.service.impl.DictionaryServiceImpl;
+import com.edible.service.impl.UserServiceImpl;
 import com.thebluecheese.android.basic.User;
 import com.thebluecheese.android.network.LoginHelper;
 import com.thebluecheese.android.network.RegisterHelper;
@@ -15,19 +22,31 @@ import android.util.Log;
 public class LoginThirdpartyAsyncTask extends AsyncTask<String, Integer, String> {
 	ProgressDialog _progressDialog;
 	Context _context;
-	String TAG = "BlueCheese";
-	
+	String TAG = "BlueCheese";	
 	String userServerAddress = "http://default-environment-9hfbefpjmu.elasticbeanstalk.com/user";
+	
+	Account currentAccount;
+	AccountService accountService;
+	UserService userService;
+	DictionaryService dictionaryService;
+	
+	
 	
 	public LoginThirdpartyAsyncTask(ProgressDialog pd,Context ct){
 		_progressDialog = pd;
 		_context = ct;
+		
+		accountService = new AccountServiceImpl();
+		userService = new UserServiceImpl();
+		dictionaryService = new DictionaryServiceImpl();
+		
 	}
 
 	@Override
-	protected String doInBackground(String... params) {		
+	protected String doInBackground(String... params) {	
 		
-		if(tryLogin()||login()){
+		//if(tryLogin()||login()){
+		if(login()){
 			Intent intent = new Intent(_context, CameraResultActivity.class);
 			_context.startActivity(intent);
 		}
@@ -51,6 +70,15 @@ public class LoginThirdpartyAsyncTask extends AsyncTask<String, Integer, String>
 		String email = sharedPre.getString("email", "");
 		String password = sharedPre.getString("pwd", "");
 		String userName = sharedPre.getString("name","");
+		int age = Integer.parseInt(sharedPre.getString("age",""));
+		String gender = sharedPre.getString("gender","");
+		String region = "China";
+		String type = "facebook";
+		String portrait = sharedPre.getString("selfie","");
+		
+		//test server 2.0
+		loginState = loginV2(email, userName, age, gender, region, type, portrait);
+		/*
 		//post register request
 		RegisterHelper rh = new RegisterHelper(email,password,userName);
 		Thread postThread = new Thread(rh);
@@ -73,6 +101,7 @@ public class LoginThirdpartyAsyncTask extends AsyncTask<String, Integer, String>
 			loginState = false;
 			
 		}
+		*/
 		Log.i(TAG, "third party user signup login state: "+ loginState);
 		return loginState;
 	}
@@ -108,5 +137,31 @@ public class LoginThirdpartyAsyncTask extends AsyncTask<String, Integer, String>
 		Log.i(TAG, "third party user try login state: "+ loginState);
 		return loginState;
 		
+	}
+	
+	public boolean loginV2(String id,String name,int age,String gender,String region,String type,String portrait){
+		boolean loginState = false;
+		try {
+			/**
+			 * 成功案例:登陆成功，并返回账号信息
+			 * 失败案例:账户或密码错误,返回提示信息
+			 * 错误案例:提示出错信息
+			 */
+//			String qq = "175191269";
+//			String name = "追影子的风";
+//			int age = 25;
+//			String gender = "male";
+//			String region = "China";
+//			String type = "qq";
+//			String portrait = "portrait_qq.jpg";
+			Account account = accountService.signInByFacebook(id, name, age, gender, region, portrait);
+			Log.i(TAG,"注册成功，欢迎进入蓝芝士的世界");
+			currentAccount = account;
+			loginState = true;
+			Log.i(TAG,"current account"+currentAccount);
+		} catch(Exception e) {
+			Log.i(TAG,"loginV2 : "+e);
+		}
+		return loginState;
 	}
 }

@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.edible.entity.Account;
+import com.edible.other.BasicException;
 import com.edible.other.Status;
 import com.edible.service.AccountService;
 import com.google.gson.JsonSyntaxException;
@@ -31,7 +32,8 @@ public class AccountServiceImpl extends BasicServiceImpl implements AccountServi
 		if(statusCode == Status.SUCCESS.getStatusCode()) {
 			return gson.fromJson(response.getJSONObject("result").toString(), Account.class);
 		} else {
-			throw new Exception(statusMsg);
+			throw new BasicException(statusCode, statusMsg);
+			
 		}
 	}
 
@@ -48,7 +50,7 @@ public class AccountServiceImpl extends BasicServiceImpl implements AccountServi
 		if(statusCode == Status.SUCCESS.getStatusCode()) {
 			return gson.fromJson(response.getJSONObject("result").toString(), Account.class);
 		} else {
-			throw new Exception(statusMsg);
+			throw new BasicException(statusCode, statusMsg);
 		}
 		
 	}
